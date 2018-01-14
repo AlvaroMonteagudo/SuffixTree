@@ -1,10 +1,12 @@
+import org.javatuples.Pair;
+
 import java.util.ArrayList;
 
 class SuffixTreeNode {
 
     private int position;
 
-    private ArrayList<SuffixTreeNode> children;
+    private ArrayList<SuffixTreeNode> children = new ArrayList<>();
 
     private boolean isLeftDiverse = false;
 
@@ -23,13 +25,13 @@ class SuffixTreeNode {
         return lastChildren;
     }
 
-    SuffixTreeNode getChildren(char character, String word) {
+    Pair<Boolean, SuffixTreeNode> getChildren(char character, String word) {
         for (SuffixTreeNode n: children) {
             if (word.charAt(n.position) == character) {
-                return n;
+                return new Pair<>(true, n);
             }
         }
-        return null;
+        return new Pair<>(false, null);
     }
 
     void updateLeftDiverse(int firstChar, String word) {
@@ -41,5 +43,9 @@ class SuffixTreeNode {
 
     public boolean isLeftDiverse() {
         return isLeftDiverse;
+    }
+
+    public int getPosition() {
+        return position;
     }
 }
