@@ -2,13 +2,15 @@ import java.util.ArrayList;
 
 class SuffixTreeNode {
 
-    public int position;
+    private final char DEFAULT_SYMBOL = 0;
 
-    public ArrayList<SuffixTreeNode> children = new ArrayList<>();
+    private int position;
 
-    public boolean isLeftDiverse = false;
+    private ArrayList<SuffixTreeNode> children = new ArrayList<>();
 
-    public int indexStartPath = 0;
+    private boolean isLeftDiverse = false;
+
+    private int indexStartPath = DEFAULT_SYMBOL;
 
 
     SuffixTreeNode(int position) {
@@ -23,37 +25,116 @@ class SuffixTreeNode {
         return lastChildren;
     }
 
-    Pair<Boolean, SuffixTreeNode> getChildren(char character, String word) {
+    SuffixTreeNode getChildren(char character, String word) {
         for (SuffixTreeNode n: children) {
             if (word.charAt(n.position) == character) {
-                return new Pair<>(true, n);
+                return n;
             }
         }
-        return new Pair<>(false, null);
+        return null;
     }
 
     void updateLeftDiverse(int firstChar, String word) {
-        if (word.charAt(this.indexStartPath - 1) != word.charAt(firstChar - 1)) {
+        char leftChar = (this.indexStartPath < 1) ? ' ' : word.charAt(this.indexStartPath);
+        char rightChar = word.charAt(firstChar - 1);
+        /*System.out.println(firstChar);
+        System.out.println(this.indexStartPath);
+        System.out.println(rightChar);
+        System.out.println(leftChar);
+        System.out.println(word);*/
+        if (leftChar != rightChar) {
             isLeftDiverse = true;
         }
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public ArrayList<SuffixTreeNode> getChildren() {
+        return children;
+    }
+
+    public void setChildren(ArrayList<SuffixTreeNode> children) {
+        this.children = children;
+    }
+
+    public boolean isLeftDiverse() {
+        return isLeftDiverse;
+    }
+
+    public void setLeftDiverse(boolean leftDiverse) {
+        isLeftDiverse = leftDiverse;
+    }
+
+    public int getIndexStartPath() {
+        return indexStartPath;
+    }
+
+    public void setIndexStartPath(int indexStartPath) {
+        this.indexStartPath = indexStartPath;
     }
 }
 
 class CompactSuffixTreeNode {
 
-    public int begin, end;
+    private int begin, end;
 
-    public ArrayList<CompactSuffixTreeNode> children = new ArrayList<>();
+    private ArrayList<CompactSuffixTreeNode> children = new ArrayList<>();
 
-    public boolean isLeftDiverse = false;
+    private boolean isLeftDiverse = false;
 
-    public int indexStartPath = 0;
+    private int indexStartPath = 0;
 
 
     public CompactSuffixTreeNode(int begin, int end, boolean isLeftDiverse, int indexStartPath) {
         this.begin = begin;
         this.end = end;
         this.isLeftDiverse = isLeftDiverse;
+        this.indexStartPath = indexStartPath;
+    }
+
+    public int getBegin() {
+        return begin;
+    }
+
+    public void setBegin(int begin) {
+        this.begin = begin;
+    }
+
+    public int getEnd() {
+        return end;
+    }
+
+    public void setEnd(int end) {
+        this.end = end;
+    }
+
+    public ArrayList<CompactSuffixTreeNode> getChildren() {
+        return children;
+    }
+
+    public void setChildren(ArrayList<CompactSuffixTreeNode> children) {
+        this.children = children;
+    }
+
+    public boolean isLeftDiverse() {
+        return isLeftDiverse;
+    }
+
+    public void setLeftDiverse(boolean leftDiverse) {
+        isLeftDiverse = leftDiverse;
+    }
+
+    public int getIndexStartPath() {
+        return indexStartPath;
+    }
+
+    public void setIndexStartPath(int indexStartPath) {
         this.indexStartPath = indexStartPath;
     }
 }

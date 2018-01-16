@@ -7,30 +7,31 @@ class SuffixTree {
     SuffixTree(String word) {
         root = new SuffixTreeNode(-1);
 
-        for (int i = 1; i < word.length() - 1; i++) {
-
+        for (int i = 1; i < word.length() - 1; ++i) {
             SuffixTreeNode current = root;
-            SuffixTreeNode lastValidNode;
-
             int len = 0;
 
-            // Check how many character are already in the tree
+            // Check how many characters are already in the tree
             while (true) {
+                SuffixTreeNode lastValidNode = current;
 
-                lastValidNode = current;
+                SuffixTreeNode children = current.getChildren(word.charAt(i + len), word);
 
-                Pair<Boolean, SuffixTreeNode> pair = current.getChildren(word.charAt(i + len), word);
-
-                if (pair.getFirst()) {
+                if (children != null) {
                     lastValidNode.updateLeftDiverse(i, word);
-                    current = pair.getSecond();
+                    current = children;
                     len++;
-                } else break;
+                } else {
+                    break;
+                }
 
             }
 
-            // Update if proceeds and not root
-            if (!current.isLeftDiverse && current.position != -1) current.updateLeftDiverse(i, word);
+            // Update if proceeds
+            if (!current.isLeftDiverse()) {
+                System.out.println(i);
+                current.updateLeftDiverse(i, word);
+            }
 
             // Add new characters that are not in the tree yet.
             for (int j = i + len; j < word.length(); j++) {
@@ -71,34 +72,54 @@ class CompactSuffixTree {
     private CompactSuffixTreeNode generateCompactSuffixTree(SuffixTreeNode node, int depth) {
         CompactSuffixTreeNode result;
         int begin, end;
-        begin = node.position;
+        begin = node.getPosition();
 
         // Compact into one single node all consecutive nodes with one children
-        while (node.children.size() == 1) {
-            node = node.children.get(0);
+        while (node.getChildren().size() == 1) {
+            node = node.getChildren().get(0);
         }
-        end = node.position;
+        end = node.getPosition();
 
-        result = new CompactSuffixTreeNode(begin, end, node.isLeftDiverse, node.indexStartPath);
+        result = new CompactSuffixTreeNode(begin, end, node.isLeftDiverse(), node.getIndexStartPath());
 
-        if (depth != 0 && node.children.size() > 0 && node.isLeftDiverse) {
+        if (depth != 0 && node.getChildren().size() > 0 && node.isLeftDiverse()) {
             maximals.add(result);
         }
 
         int newDepth = depth + end - begin;
 
-        for (SuffixTreeNode children: node.children) {
+        for (SuffixTreeNode children: node.getChildren()) {
 
-            result.children.add(generateCompactSuffixTree(children, newDepth + 1));
+            result.getChildren().add(generateCompactSuffixTree(children, newDepth + 1));
         }
 
-        if (result.children.size() != 0) {
+        if (result.getChildren().size() != 0) {
             if (newDepth > indexLongestSubstring) {
                 indexLongestSubstring = newDepth;
                 nodeLongestSubstring = result;
             }
         }
 
+        return result;
+    }
+
+    String getLongestSubstring() {
+        if (nodeLongestSubstring != null) {
+            int start = nodeLongestSubstring.getIndexStartPath();
+            int end =  nodeLongestSubstring.getEnd();
+            return string.substring(start, end - start + 1);
+        } else {
+            return "";
+        }
+    }
+
+    ArrayList<String> getMaximals() {
+        ArrayList<String> result = new ArrayList<>();
+        for (CompactSuffixTreeNode node: maximals) {
+            int start = nodeLongestSubstring.getIndexStartPath();
+            int end =  nodeLongestSubstring.getEnd();
+            result.add(string.substring(start, end - start + 1));
+        }
         return result;
     }
 }
