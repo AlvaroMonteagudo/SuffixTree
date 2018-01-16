@@ -1,16 +1,14 @@
-import org.javatuples.Pair;
-
 import java.util.ArrayList;
 
 class SuffixTreeNode {
 
-    private int position;
+    public int position;
 
-    private ArrayList<SuffixTreeNode> children = new ArrayList<>();
+    public ArrayList<SuffixTreeNode> children = new ArrayList<>();
 
-    private boolean isLeftDiverse = false;
+    public boolean isLeftDiverse = false;
 
-    private int indexStartPath = 0;
+    public int indexStartPath = 0;
 
 
     SuffixTreeNode(int position) {
@@ -38,14 +36,24 @@ class SuffixTreeNode {
         if (word.charAt(this.indexStartPath - 1) != word.charAt(firstChar - 1)) {
             isLeftDiverse = true;
         }
-
     }
+}
 
-    public boolean isLeftDiverse() {
-        return isLeftDiverse;
-    }
+class CompactSuffixTreeNode {
 
-    public int getPosition() {
-        return position;
+    public int begin, end;
+
+    public ArrayList<CompactSuffixTreeNode> children = new ArrayList<>();
+
+    public boolean isLeftDiverse = false;
+
+    public int indexStartPath = 0;
+
+
+    public CompactSuffixTreeNode(int begin, int end, boolean isLeftDiverse, int indexStartPath) {
+        this.begin = begin;
+        this.end = end;
+        this.isLeftDiverse = isLeftDiverse;
+        this.indexStartPath = indexStartPath;
     }
 }
