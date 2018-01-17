@@ -35,7 +35,7 @@ class SuffixTreeNode {
     }
 
     void updateLeftDiverse(int firstChar, String word) {
-        char leftChar = (this.indexStartPath < 1) ? ' ' : word.charAt(this.indexStartPath);
+        char leftChar = (this.indexStartPath < 1) ? ' ' : word.charAt(this.indexStartPath - 1);
         char rightChar = word.charAt(firstChar - 1);
         /*System.out.println(firstChar);
         System.out.println(this.indexStartPath);
@@ -91,7 +91,7 @@ class CompactSuffixTreeNode {
     private int indexStartPath = 0;
 
 
-    public CompactSuffixTreeNode(int begin, int end, boolean isLeftDiverse, int indexStartPath) {
+    CompactSuffixTreeNode(int begin, int end, boolean isLeftDiverse, int indexStartPath) {
         this.begin = begin;
         this.end = end;
         this.isLeftDiverse = isLeftDiverse;

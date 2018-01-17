@@ -29,7 +29,6 @@ class SuffixTree {
 
             // Update if proceeds
             if (!current.isLeftDiverse()) {
-                System.out.println(i);
                 current.updateLeftDiverse(i, word);
             }
 
@@ -58,15 +57,11 @@ class CompactSuffixTree {
 
     private CompactSuffixTreeNode nodeLongestSubstring = null;
 
-    public CompactSuffixTree(String word) {
+    CompactSuffixTree(String word) {
         string = "$" + word + "$";
         SuffixTree tree = new SuffixTree(string);
         maximals = new ArrayList<>();
-        root = generateCompactSuffixTree(tree.getRoot());
-    }
-
-    private CompactSuffixTreeNode generateCompactSuffixTree(SuffixTreeNode node) {
-        return generateCompactSuffixTree(node, 0);
+        root = generateCompactSuffixTree(tree.getRoot(), 0);
     }
 
     private CompactSuffixTreeNode generateCompactSuffixTree(SuffixTreeNode node, int depth) {
@@ -89,7 +84,6 @@ class CompactSuffixTree {
         int newDepth = depth + end - begin;
 
         for (SuffixTreeNode children: node.getChildren()) {
-
             result.getChildren().add(generateCompactSuffixTree(children, newDepth + 1));
         }
 
@@ -107,7 +101,8 @@ class CompactSuffixTree {
         if (nodeLongestSubstring != null) {
             int start = nodeLongestSubstring.getIndexStartPath();
             int end =  nodeLongestSubstring.getEnd();
-            return string.substring(start, end - start + 1);
+            int len = end - start + 1;
+            return string.substring(start, start + len);
         } else {
             return "";
         }
