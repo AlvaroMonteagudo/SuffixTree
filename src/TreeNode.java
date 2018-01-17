@@ -37,11 +37,6 @@ class SuffixTreeNode {
     void updateLeftDiverse(int firstChar, String word) {
         char leftChar = (this.indexStartPath < 1) ? ' ' : word.charAt(this.indexStartPath - 1);
         char rightChar = word.charAt(firstChar - 1);
-        /*System.out.println(firstChar);
-        System.out.println(this.indexStartPath);
-        System.out.println(rightChar);
-        System.out.println(leftChar);
-        System.out.println(word);*/
         if (leftChar != rightChar) {
             isLeftDiverse = true;
         }
@@ -51,32 +46,16 @@ class SuffixTreeNode {
         return position;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
     public ArrayList<SuffixTreeNode> getChildren() {
         return children;
-    }
-
-    public void setChildren(ArrayList<SuffixTreeNode> children) {
-        this.children = children;
     }
 
     public boolean isLeftDiverse() {
         return isLeftDiverse;
     }
 
-    public void setLeftDiverse(boolean leftDiverse) {
-        isLeftDiverse = leftDiverse;
-    }
-
     public int getIndexStartPath() {
         return indexStartPath;
-    }
-
-    public void setIndexStartPath(int indexStartPath) {
-        this.indexStartPath = indexStartPath;
     }
 }
 
@@ -98,43 +77,19 @@ class CompactSuffixTreeNode {
         this.indexStartPath = indexStartPath;
     }
 
-    public int getBegin() {
-        return begin;
-    }
-
-    public void setBegin(int begin) {
-        this.begin = begin;
-    }
-
     public int getEnd() {
         return end;
-    }
-
-    public void setEnd(int end) {
-        this.end = end;
     }
 
     public ArrayList<CompactSuffixTreeNode> getChildren() {
         return children;
     }
 
-    public void setChildren(ArrayList<CompactSuffixTreeNode> children) {
-        this.children = children;
-    }
-
     public boolean isLeftDiverse() {
         return isLeftDiverse;
     }
 
-    public void setLeftDiverse(boolean leftDiverse) {
-        isLeftDiverse = leftDiverse;
-    }
-
     public int getIndexStartPath() {
         return indexStartPath;
-    }
-
-    public void setIndexStartPath(int indexStartPath) {
-        this.indexStartPath = indexStartPath;
     }
 }

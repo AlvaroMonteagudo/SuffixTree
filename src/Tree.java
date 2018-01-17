@@ -113,7 +113,8 @@ class CompactSuffixTree {
         for (CompactSuffixTreeNode node: maximals) {
             int start = nodeLongestSubstring.getIndexStartPath();
             int end =  nodeLongestSubstring.getEnd();
-            result.add(string.substring(start, end - start + 1));
+            int len = end - start + 1;
+            result.add(string.substring(start, start + len));
         }
         return result;
     }
