@@ -1,24 +1,40 @@
+/**
+ *  Implementation of a string random generator.
+ *
+ *  @authors Silvia Usón: 681721 at unizar dot es
+ *           Álvaro Monteagudo: 681060 at unizar dot es
+ *
+ *  @version 1.0
+ *
+ */
+
 import java.util.Random;
 
 public class RandomGenerator {
 
     private static Random rnd;
-    private static char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-    private static char[] numbers = "0123456789".toCharArray();
+    private static char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray(); // Letters array
+    private static char[] numbers = "0123456789".toCharArray(); // Numbers array
 
+    // Character array
     private static char[] alphanumeric = (String.valueOf(chars) + String.valueOf(numbers)).toCharArray();
 
+    /**
+     * Default constructor
+     */
     RandomGenerator() {
         rnd = new Random();
     }
 
+    // Get random generator
     public Random getRnd() {
         return rnd;
     }
 
-    /*
-     * Return a random string
-	 */
+    /**
+     * @param n characters to generate
+     * @return string with n letters randomly selected
+     */
     public String stringRandom(int n) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < n; i++) {
@@ -27,8 +43,9 @@ public class RandomGenerator {
         return sb.toString();
     }
 
-    /*
-     * Return a random string that represents a number
+    /**
+     * @param n characters to generate
+     * @return string with n numbers randomly selected
      */
     public String numberStringRandom(int n) {
         StringBuilder sb = new StringBuilder();
@@ -38,8 +55,9 @@ public class RandomGenerator {
         return sb.toString();
     }
 
-    /*
-     * Return a random string with numbers and letters
+    /**
+     * @param n characters to generate
+     * @return string with n characters randomly selected
      */
     public String alphanumericRandom(int n) {
         StringBuilder sb = new StringBuilder();

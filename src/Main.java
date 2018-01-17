@@ -1,6 +1,18 @@
+/**
+ *  Implementation for basic and compacted tree nodes.
+ *
+ *  @authors Silvia Usón: 681721 at unizar dot es
+ *           Álvaro Monteagudo: 681060 at unizar dot es
+ *
+ *  @version 1.0
+ *
+ */
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import static java.lang.System.*;
 
 public class Main {
 
@@ -9,19 +21,23 @@ public class Main {
     private static String file;
     private static String treeWord = "";
 
+    /**
+     * Main method
+     * @param args
+     */
     public static void main(String[] args) {
 
         parseArguments(args);
 
         if (treeWord.equals("")) {
-            Scanner keyboard = new Scanner(System.in);
-            System.out.print("Enter word: ");
+            Scanner keyboard = new Scanner(in);
+            out.print("Enter word: ");
             treeWord = keyboard.next();
-        } else System.out.println("Input word: " + treeWord);
+        } else out.println("Input word: " + treeWord);
 
         CompactSuffixTree tree = new CompactSuffixTree(treeWord);
 
-        if (getLongest) System.out.println("Longest repeated substring: " + tree.getLongestSubstring());
+        if (getLongest) out.println("Longest repeated substring: " + tree.getLongestSubstring());
         if (getMaximals) {
             ArrayList<String> maximals = tree.getMaximals();
             if (!maximals.isEmpty()) {
@@ -33,11 +49,15 @@ public class Main {
                         sb.append('\n').append('\t');
                     }
                 }
-                System.out.println(sb.toString());
-            } else System.out.println("No maximals for the input word: " + treeWord);
+                out.println(sb.toString());
+            } else out.println("No maximals for the input word: " + treeWord);
         }
     }
 
+    /**
+     * Set algorithm parameters
+     * @param args array where options for algorithm are stored
+     */
     private static void parseArguments(String[] args) {
         for (int i = 0; i < args.length ; i++) {
             switch (args[i]) {
@@ -53,7 +73,7 @@ public class Main {
                         randomChars = Integer.parseInt(args[i]);
                         treeWord = (treeWord.equals("")) ? new RandomGenerator().stringRandom(randomChars) : treeWord;
                     } catch (NumberFormatException | NullPointerException e) {
-                        System.err.println(e.getMessage());
+                        err.println(e.getMessage());
                     }
                     break;
                 case "-file":
@@ -67,27 +87,34 @@ public class Main {
                     break;
                 case "-h":
                     printUsage();
-                    break;
+                    exit(0);
                 default:
                     printUsage();
-                    break;
+                    exit(0);
             }
         }
 
     }
 
+    /**
+     * Prints instructions of use
+     */
     private static void printUsage() {
-        System.out.println("./Main [-h] [-longest] [-maximals] [-random] [-file] ");
-        System.out.println("This program builds the corresponding suffix tree for a word from" +
+        out.println("./Main [-h] [-longest] [-maximals] [-random] [-file] ");
+        out.println("This program builds the corresponding suffix tree for a word from" +
                 "which you can get the longest repeated substring and all the maximals of the tree.\n" +
-                "Word can be supplied from a file, generated randomly with n characters or from the input" +
-                "of this program.\nFile has priority over random string and random over user input.");
-        System.out.println("Available options:");
-        System.out.println("\t-longest: get the longest repeated substring.");
-        System.out.println("\t-maximals: get all maximal repetitions in the string.");
-        System.out.println("\t-random <INTEGER>: generate a random word with n characters.");
-        System.out.println("\t-file <STRING>: file name where string is located.");
-        System.out.println("\t-h: this helpful message.");
+                "Word can be supplied from a file, generated randomly with n characters or from the input " +
+                "of this program.\nFile has priority over random string and random over user input.\n" +
+                "Visualization of Ukkonen's algorithm step by step, visit the next webpage: " +
+                "http://brenden.github.io/ukkonen-animation/\n" +
+                "All credits to: Brenden Kokoszka. Git user: https://github.com/brenden");
+        out.println("Available options:");
+        out.println("\t-longest: get the longest repeated substring.");
+        out.println("\t-maximals: get all maximal repetitions in the string.");
+        out.println("\t-random <INTEGER>: generate a random word with n characters.");
+        out.println("\t-file <STRING>: file name where string is located.");
+        out.println("\t-h: this helpful message.");
+        out.println();
     }
 
 }
