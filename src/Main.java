@@ -20,7 +20,6 @@ public class Main {
     private static int randomChars;
     private static String file;
     private static String treeWord = "";
-
     /**
      * Main method
      * @param args
@@ -34,8 +33,17 @@ public class Main {
             out.print("Enter word: ");
             treeWord = keyboard.next();
         } else out.println("Input word: " + treeWord);
-
-        CompactSuffixTree tree = new CompactSuffixTree(treeWord);
+		//Dividimos el texto en palabras
+        //TODO: cuidado que esta parte ahora no esta bien , es para que veas que quiero añadirle
+        //palara por palabra al arbol
+		CompactSuffixTree tree = new CompactSuffixTree();
+		String[] cadenas = treeWord.split("(?<=\\s)");
+    	for(int i=0;i<cadenas.length;i++){
+    		if(!cadenas[i].equals(" ")){
+    			tree.addWord(cadenas[i]);
+			}
+		}
+        
 
         if (getLongest) out.println("Longest repeated substring: " + tree.getLongestSubstring());
         if (getMaximals) {
@@ -79,11 +87,7 @@ public class Main {
                 case "-file":
                     ++i;
                     file = args[i];
-                    try(BufferedReader br = new BufferedReader(new FileReader(file))) {
-                        treeWord = br.readLine();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    readFile();
                     break;
                 case "-h":
                     printUsage();
@@ -111,10 +115,38 @@ public class Main {
         out.println("Available options:");
         out.println("\t-longest: get the longest repeated substring.");
         out.println("\t-maximals: get all maximal repetitions in the string.");
-        out.println("\t-random <INTEGER>: generate a random word with n characters.");
+        out.println("\t-random <INTEGER>: generate a random patron with n characters.");
         out.println("\t-file <STRING>: file name where string is located.");
         out.println("\t-h: this helpful message.");
         out.println();
+    }
+	/*
+	 * Lee el fichero de texto y lo asigna a treeWord
+	 */
+	private static void readFile(){
+    	File f = new File(file);
+        if (f.exists()) {
+            Scanner s = null;
+            try {
+                s = new Scanner(f);
+                while (s.hasNextLine()) {
+                    treeWord+= s.nextLine();
+                }
+                //parsear el texto para eliminar caracteres especiales
+                treeWord = treeWord.replace(',',' ');
+            	treeWord = treeWord.replace('.',' ');
+            	treeWord = treeWord.replace('¿',' ');
+            	treeWord = treeWord.replace('?',' ');
+            	treeWord = treeWord.replace('¡',' ');
+            	treeWord = treeWord.replace('!',' ');
+            	treeWord = treeWord.replace('(',' ');
+            	treeWord = treeWord.replace(')',' ');
+                s.close();
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
 }
