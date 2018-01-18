@@ -90,16 +90,19 @@ class CompactSuffixTree {
      * Constructor for compacted suffix tree
      * @param word from which tree is built
      */
-    CompactSuffixTree(String word) {
+    CompactSuffixTree(String word, int mode) {
         string = "$" + word + "$";
         maximals = new ArrayList<>();
         // N CUADRADO
-        /*SuffixTree tree = new SuffixTree(string);
-        root = generateCompactSuffixTree(tree.getRoot(), 0);*/
-        // N LOG N
-        root = new CompactSuffixTreeNode(-1, -1, false, 0);
-        for (int i = 1; i < string.length() - 1; i++) {
-            insertNewNode(root, i, i);
+        if (mode == 0) {
+            SuffixTree tree = new SuffixTree(string);
+            root = generateCompactSuffixTree(tree.getRoot(), 0);
+        } else {
+            // N LOG N
+            root = new CompactSuffixTreeNode(-1, -1, false, 0);
+            for (int i = 1; i < string.length() - 1; i++) {
+                insertNewNode(root, i, i);
+            }
         }
     }
 
@@ -125,8 +128,10 @@ class CompactSuffixTree {
 
         // None child matched the character, insert new node
         if (idx == -1) {
+            System.out.println("if");
             root.children.add(new CompactSuffixTreeNode(from, string.length() - 1, false, startIndexInWord));
         } else if (node.begin + charactersInTree <= node.end) {
+            System.out.println("else");
             int start = from, end = from + charactersInTree - 1;
             char leftChar = (node.indexStartPath < 1) ? ' ' : string.charAt(node.indexStartPath - 1);
             char rightChar = (startIndexInWord < 1) ? ' ' : string.charAt(startIndexInWord - 1);
@@ -152,6 +157,7 @@ class CompactSuffixTree {
             insertNewNode(newNode, from + charactersInTree, startIndexInWord);
         
         } else {
+            System.out.println("else2");
             char leftChar = (node.indexStartPath < 1) ? ' ' : string.charAt(node.indexStartPath - 1);
             char rightChar = (startIndexInWord < 1) ? ' ' : string.charAt(startIndexInWord - 1);
             if (!node.isLeftDiverse && leftChar != rightChar) {
