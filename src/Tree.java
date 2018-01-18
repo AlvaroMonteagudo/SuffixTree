@@ -105,7 +105,87 @@ class CompactSuffixTree {
             }
         }
     }
-
+    /*
+     * Devuelve true en caso de que este el <pattern> en el texto almacenado en el arbol, 
+     * false en caso contrario.
+     */
+    public boolean searchPattern(String pattern){
+    	boolean encontrado = false;
+    	boolean fin = false;
+    	boolean pararDeBuscar = false;
+    	ArrayList<CompactSuffixTreeNode> child;
+    	CompactSuffixTreeNode actual = this.root;
+    	CompactSuffixTreeNode hijoAct;
+    	int pos=0;
+    	int i= 0;
+    	int len = 0;
+    	int emp=0;
+    	int maxLen = string.length()-1;	// El -1 esta para que descarte el $ inicial
+    	while(!encontrado && !pararDeBuscar){
+    		if(actual != null){
+    			fin = false;
+    			i = 0;
+    			child = actual.children;//Cojo la lista de hijos
+    			while(!fin){
+    				hijoAct = child.get(i);
+    				//TODO: Como al ultimo caracter le dices q empieza en su pos y acaba en la de $ trunco aqui 
+    				if(hijoAct.end == maxLen){
+    					len = (hijoAct.end-1) - hijoAct.begin ;
+    				}
+    				else{
+    					len = hijoAct.end - hijoAct.begin ;
+    				}
+    				
+    				//Si no coincide el caracter
+    				if(string.charAt(hijoAct.begin) !=pattern.charAt(pos)){
+    					i++;
+    				}
+    				else{
+    					//Si coincide el caracter y ademas el arbol esta compactado
+    					if(len > 0){
+    						emp = hijoAct.begin;
+    	    				while(emp>= 0 && emp <= (hijoAct.end-1)){
+    	    					if(pos < pattern.length() && string.charAt(emp) ==pattern.charAt(pos)){
+    	    						emp++;
+    	    						pos++;
+    	    					}
+    	    					else{
+    	    						emp = -1;
+    	    						fin = true;
+    	    						pararDeBuscar =true;	//No va a estar porque no va a haber otro nodo que tenga el mismo caracter[0]
+    	    					}
+    	    				}
+    	    				//El patron es mas largo que la cadena
+    	    				if(emp >= hijoAct.end){
+    	    					pararDeBuscar = true;
+    	    				}
+    					}
+    					//Si estoy en final de texto y tambien de patron y ademas no he detectado que no este
+    					fin = true;
+    					if(hijoAct.children.isEmpty() &&  pos == (pattern.length()-1) && !pararDeBuscar){
+    						pararDeBuscar = true;
+    						encontrado = true; //LO ENCONTRE
+    					}
+    					else if(pos == (pattern.length()-1)){
+    						pararDeBuscar = true;	//No va a estar
+    					}
+    					else if(!pararDeBuscar){		//Bajo al hijo del actual
+    						pos++;
+    						actual = hijoAct;
+    					}
+    				}
+    				if(i >= actual.children.size()){
+    					fin = true;
+    					pararDeBuscar = true;
+    				}
+    			}
+    		}
+    		else{
+    			pararDeBuscar = true;
+    		}
+    	}		    			
+    	return encontrado;
+    }
     private void insertNewNode(CompactSuffixTreeNode root, int from, int startIndexInWord) {
         CompactSuffixTreeNode node = root;
 
@@ -128,10 +208,8 @@ class CompactSuffixTree {
 
         // None child matched the character, insert new node
         if (idx == -1) {
-            System.out.println("if");
             root.children.add(new CompactSuffixTreeNode(from, string.length() - 1, false, startIndexInWord));
         } else if (node.begin + charactersInTree <= node.end) {
-            System.out.println("else");
             int start = from, end = from + charactersInTree - 1;
             char leftChar = (node.indexStartPath < 1) ? ' ' : string.charAt(node.indexStartPath - 1);
             char rightChar = (startIndexInWord < 1) ? ' ' : string.charAt(startIndexInWord - 1);
@@ -157,7 +235,6 @@ class CompactSuffixTree {
             insertNewNode(newNode, from + charactersInTree, startIndexInWord);
         
         } else {
-            System.out.println("else2");
             char leftChar = (node.indexStartPath < 1) ? ' ' : string.charAt(node.indexStartPath - 1);
             char rightChar = (startIndexInWord < 1) ? ' ' : string.charAt(startIndexInWord - 1);
             if (!node.isLeftDiverse && leftChar != rightChar) {
@@ -250,4 +327,6 @@ class CompactSuffixTree {
         }
         return result;
     }
+    
+    
 }
