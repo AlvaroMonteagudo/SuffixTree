@@ -9,7 +9,9 @@
  */
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import static java.lang.System.*;
@@ -17,32 +19,41 @@ import static java.lang.System.*;
 public class Main {
 
     private static boolean getLongest = false, getMaximals = false;
-    private static int randomChars;
-    private static String file;
-    private static String treeWord = "";
+    private static String treeWord, pattern, filename;
+    private static ArrayList<String> words = new ArrayList<>();
+
     /**
      * Main method
      * @param args
      */
     public static void main(String[] args) {
 
-        parseArguments(args);
 
-        if (treeWord.equals("")) {
-            Scanner keyboard = new Scanner(in);
+        treeWord = "aaaab";
+        CompactSuffixTree tree = new CompactSuffixTree(treeWord);
+        System.out.println(tree.getLongestSubstring());
+
+        /*parseArguments(args);
+
+        Scanner keyboard = new Scanner(in);
+        out.print("Enter patern: ");
+        pattern = keyboard.next();
+
+        if (treeWord.equals("") && words.isEmpty()) {
             out.print("Enter word: ");
             treeWord = keyboard.next();
-        } else out.println("Input word: " + treeWord);
-		//Dividimos el texto en palabras
-        //TODO: cuidado que esta parte ahora no esta bien , es para que veas que quiero añadirle
-        //palara por palabra al arbol
-		CompactSuffixTree tree = new CompactSuffixTree();
-		String[] cadenas = treeWord.split("(?<=\\s)");
-    	for(int i=0;i<cadenas.length;i++){
-    		if(!cadenas[i].equals(" ")){
-    			tree.addWord(cadenas[i]);
-			}
-		}
+            treeWord = removeSpecialChars(treeWord);
+            out.println("Input word: " + treeWord);
+        }
+
+		CompactSuffixTree tree;
+		if (!words.isEmpty()) {
+            out.println("Input words in file: " + filename);
+            tree = new CompactSuffixTree(words.toArray(new String[words.size()]));
+        } else {
+            out.println("Input word: " + treeWord);
+    	    tree = new CompactSuffixTree(treeWord);
+        }
         
 
         if (getLongest) out.println("Longest repeated substring: " + tree.getLongestSubstring());
@@ -59,7 +70,7 @@ public class Main {
                 }
                 out.println(sb.toString());
             } else out.println("No maximals for the input word: " + treeWord);
-        }
+        }*/
     }
 
     /**
@@ -78,7 +89,7 @@ public class Main {
                 case "-random":
                     ++i;
                     try {
-                        randomChars = Integer.parseInt(args[i]);
+                        int randomChars = Integer.parseInt(args[i]);
                         treeWord = (treeWord.equals("")) ? new RandomGenerator().stringRandom(randomChars) : treeWord;
                     } catch (NumberFormatException | NullPointerException e) {
                         err.println(e.getMessage());
@@ -86,9 +97,16 @@ public class Main {
                     break;
                 case "-file":
                     ++i;
-                    file = args[i];
-                    readFile();
-                    break;
+                    try {
+                        int number = Integer.parseInt(args[i]);
+                        ++i;
+                        filename = args[i];
+                        words = readFile(filename, number);
+                        break;
+                    } catch (NumberFormatException | NullPointerException ex) {
+                        err.println("Trace: " + Arrays.toString(ex.getStackTrace()) + ". Message: " + ex.getMessage());
+                        exit(-1);
+                    }
                 case "-h":
                     printUsage();
                     exit(0);
@@ -105,8 +123,8 @@ public class Main {
      */
     private static void printUsage() {
         out.println("./Main [-h] [-longest] [-maximals] [-random] [-file] ");
-        out.println("This program builds the corresponding suffix tree for a word from" +
-                "which you can get the longest repeated substring and all the maximals of the tree.\n" +
+        out.println("This program builds the corresponding suffix tree for a word or a bunch of words from" +
+                "which you can check if a certain pattern exists, you can also get the longest repeated substring and all the maximals of the tree.\n" +
                 "Word can be supplied from a file, generated randomly with n characters or from the input " +
                 "of this program.\nFile has priority over random string and random over user input.\n" +
                 "Visualization of Ukkonen's algorithm step by step, visit the next webpage: " +
@@ -116,37 +134,48 @@ public class Main {
         out.println("\t-longest: get the longest repeated substring.");
         out.println("\t-maximals: get all maximal repetitions in the string.");
         out.println("\t-random <INTEGER>: generate a random patron with n characters.");
-        out.println("\t-file <STRING>: file name where string is located.");
+        out.println("\t-file <INTEGER> <STRING>: number of testx to read from file.");
         out.println("\t-h: this helpful message.");
         out.println();
     }
+
 	/*
 	 * Lee el fichero de texto y lo asigna a treeWord
 	 */
-	private static void readFile(){
-    	File f = new File(file);
+	private static ArrayList<String> readFile(String filename, int n){
+        ArrayList<String> words = new ArrayList<>();
+    	File f = new File(filename);
         if (f.exists()) {
-            Scanner s = null;
+            Scanner s;
             try {
                 s = new Scanner(f);
-                while (s.hasNextLine()) {
-                    treeWord+= s.nextLine();
+                s.useDelimiter(" +");
+                while (n > 0) {
+                    String word = removeSpecialChars(s.next());
+                    if (!word.trim().equals("")) {
+                        words.add(word);
+                        --n;
+                    }
                 }
-                //parsear el texto para eliminar caracteres especiales
-                treeWord = treeWord.replace(',',' ');
-            	treeWord = treeWord.replace('.',' ');
-            	treeWord = treeWord.replace('¿',' ');
-            	treeWord = treeWord.replace('?',' ');
-            	treeWord = treeWord.replace('¡',' ');
-            	treeWord = treeWord.replace('!',' ');
-            	treeWord = treeWord.replace('(',' ');
-            	treeWord = treeWord.replace(')',' ');
                 s.close();
             }
             catch (Exception ex) {
-                ex.printStackTrace();
+                err.println("Trace: " + Arrays.toString(ex.getStackTrace()) + ". Message: " + ex.getMessage());
             }
         }
+        return words;
     }
+
+    private static String removeSpecialChars(String s) {
+        return s /*.replace(',',' ')
+                .replace('.',' ')
+                .replace('¿',' ')
+                .replace('?',' ')
+                .replace('¡',' ')
+                .replace('!',' ')
+                .replace('(',' ')
+                .replace(')',' ')*/
+                .replaceAll("[^a-zA-Z0-9]+","");
+	}
 
 }

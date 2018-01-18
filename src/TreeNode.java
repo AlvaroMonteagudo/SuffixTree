@@ -17,19 +17,19 @@ import java.util.ArrayList;
 class SuffixTreeNode {
 
     // Default value for node
-    private final char DEFAULT_SYMBOL = 0;
+    public final char DEFAULT_SYMBOL = 0;
 
     // Position of the node
-    private int position;
+    public int position;
 
     // List containing all the children of this node
-    private ArrayList<SuffixTreeNode> children = new ArrayList<>();
+    public ArrayList<SuffixTreeNode> children = new ArrayList<>();
 
     // Flag if node is left diverse
-    private boolean isLeftDiverse = false;
+    public boolean isLeftDiverse = false;
 
     // Helpful parameter to determine if a node is left diverse
-    private int indexStartPath = DEFAULT_SYMBOL;
+    public int indexStartPath = DEFAULT_SYMBOL;
 
 
     /**
@@ -79,27 +79,6 @@ class SuffixTreeNode {
             isLeftDiverse = true;
         }
     }
-
-
-    // Position of the node
-    public int getPosition() {
-        return position;
-    }
-
-    // List with the children of the node
-    public ArrayList<SuffixTreeNode> getChildren() {
-        return children;
-    }
-
-    // Left diverse flag
-    public boolean isLeftDiverse() {
-        return isLeftDiverse;
-    }
-
-    // Parameter to determine left diversity
-    public int getIndexStartPath() {
-        return indexStartPath;
-    }
 }
 
 /**
@@ -109,16 +88,16 @@ class SuffixTreeNode {
 class CompactSuffixTreeNode {
 
     // Values of the node
-    private int begin, end;
+    public int begin, end;
 
     // List containing all the children of this node
-    private ArrayList<CompactSuffixTreeNode> children = new ArrayList<>();
+    public ArrayList<CompactSuffixTreeNode> children = new ArrayList<>();
 
     // Flag if node is left diverse
-    private boolean isLeftDiverse = false;
+    public boolean isLeftDiverse = false;
 
     // Helpful parameter to determine if a node is left diverse
-    private int indexStartPath = 0;
+    public int indexStartPath = 0;
 
 
     /**
@@ -133,25 +112,5 @@ class CompactSuffixTreeNode {
         this.end = end;
         this.isLeftDiverse = isLeftDiverse;
         this.indexStartPath = indexStartPath;
-    }
-
-    // End value of the node
-    public int getEnd() {
-        return end;
-    }
-
-    // List with the children of the node
-    public ArrayList<CompactSuffixTreeNode> getChildren() {
-        return children;
-    }
-
-    // Left diverse flag
-    public boolean isLeftDiverse() {
-        return isLeftDiverse;
-    }
-
-    // Parameter to determine left diversity
-    public int getIndexStartPath() {
-        return indexStartPath;
     }
 }
