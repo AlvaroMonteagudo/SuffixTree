@@ -1,8 +1,8 @@
 /**
  *  Implementation for basic and compacted suffix trees.
  *
- *  @authors Silvia Usón: 681721 at unizar dot es
- *           Álvaro Monteagudo: 681060 at unizar dot es
+ *  @authors Silvia UsÃ³n: 681721 at unizar dot es
+ *           Ã�lvaro Monteagudo: 681060 at unizar dot es
  *
  *  @version 1.0
  *
@@ -110,7 +110,6 @@ class CompactSuffixTree {
      * false en caso contrario.
      */
     public boolean searchPattern(String pattern){
-    	boolean encontrado = false;
     	boolean fin = false;
     	boolean pararDeBuscar = false;
     	ArrayList<CompactSuffixTreeNode> child;
@@ -121,7 +120,7 @@ class CompactSuffixTree {
     	int len = 0;
     	int emp=0;
     	int maxLen = string.length()-1;	// El -1 esta para que descarte el $ inicial
-    	while(!encontrado && !pararDeBuscar){
+    	while(!pararDeBuscar){
     		if(actual != null){
     			fin = false;
     			i = 0;
@@ -164,7 +163,7 @@ class CompactSuffixTree {
     					fin = true;
     					if(hijoAct.children.isEmpty() &&  pos == (pattern.length()-1) && !pararDeBuscar){
     						pararDeBuscar = true;
-    						encontrado = true; //LO ENCONTRE
+    						return true; //LO ENCONTRE
     					}
     					else if(pos == (pattern.length()-1)){
     						pararDeBuscar = true;	//No va a estar
@@ -184,7 +183,7 @@ class CompactSuffixTree {
     			pararDeBuscar = true;
     		}
     	}		    			
-    	return encontrado;
+    	return false;
     }
     private void insertNewNode(CompactSuffixTreeNode root, int from, int startIndexInWord) {
         CompactSuffixTreeNode node = root;
