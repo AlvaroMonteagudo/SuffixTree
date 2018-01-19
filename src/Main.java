@@ -13,6 +13,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.System.*;
 
@@ -29,10 +30,16 @@ public class Main {
     public static void main(String[] args) {
 
 
+
         treeWord = "banana";
-        CompactSuffixTree tree = new CompactSuffixTree(treeWord, 1);
-        System.out.println(tree.getLongestSubstring());
-        System.out.println(tree.searchPattern("ana"));
+        Timer timer = Timer.start();
+        CompactSuffixTree tree = new CompactSuffixTree(treeWord, 0);
+        System.out.println(tree.searchPattern("ash"));
+        //System.out.println(timer.time(TimeUnit.MICROSECONDS));
+        //System.out.println("");
+        //timer.reset();
+        //tree = new CompactSuffixTree(treeWord, 1);
+        //System.out.println(timer.time(TimeUnit.MICROSECONDS));
 
         /*parseArguments(args);
 
