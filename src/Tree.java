@@ -113,6 +113,7 @@ class CompactSuffixTree {
     public boolean searchPattern(String pattern){
     	boolean fin = false;
     	boolean pararDeBuscar = false;
+    	boolean posible = false;
     	ArrayList<CompactSuffixTreeNode> child;
     	CompactSuffixTreeNode actual = this.root;
     	CompactSuffixTreeNode hijoAct;
@@ -121,38 +122,48 @@ class CompactSuffixTree {
     	int len = 0;
     	int emp=0;
     	int maxLen = string.length()-1;	// El -1 esta para que descarte el $ inicial
+    	if(pattern.length() >= maxLen){
+    		return false;
+    	}
     	while(!pararDeBuscar){
     		if(actual != null){
     			fin = false;
     			i = 0;
     			child = actual.children;//Cojo la lista de hijos
     			while(!fin){
+    				posible = false;
     				hijoAct = child.get(i);
-    				//TODO: Como al ultimo caracter le dices q empieza en su pos y acaba en la de $ trunco aqui
+    				//TODO: Como al ultimo caracter le dices q empieza en su pos y acaba en la de $ trunco aqui 
     				if(hijoAct.end == maxLen){
     					len = (hijoAct.end-1) - hijoAct.begin ;
     				}
     				else{
     					len = hijoAct.end - hijoAct.begin ;
     				}
-
+    				
     				//Si no coincide el caracter
     				if(string.charAt(hijoAct.begin) !=pattern.charAt(pos)){
     					i++;
     				}
     				else{
+    					posible = true;
     					//Si coincide el caracter y ademas el arbol esta compactado
     					if(len > 0){
     						emp = hijoAct.begin;
     	    				while(emp>= 0 && emp <= (hijoAct.end-1)){
+    	    					if(pos == pattern.length()){
+    	    						return true;
+    	    					}
     	    					if(pos < pattern.length() && string.charAt(emp) ==pattern.charAt(pos)){
+    	    						posible = true;
     	    						emp++;
     	    						pos++;
     	    					}
     	    					else{
-    	    						emp = -1;
-    	    						fin = true;
-    	    						pararDeBuscar =true;	//No va a estar porque no va a haber otro nodo que tenga el mismo caracter[0]
+    	    						posible = false;
+	    							emp = -1;
+	    							fin = true;
+	    							pararDeBuscar =true;	//No va a estar porque no va a haber otro nodo que tenga el mismo caracter[0]
     	    					}
     	    				}
     	    				//El patron es mas largo que la cadena
@@ -167,6 +178,9 @@ class CompactSuffixTree {
     						return true; //LO ENCONTRE
     					}
     					else if(pos == (pattern.length()-1)){
+    						if(posible){
+    							return true;
+    						}
     						pararDeBuscar = true;	//No va a estar
     					}
     					else if(!pararDeBuscar){		//Bajo al hijo del actual
