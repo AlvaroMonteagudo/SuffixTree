@@ -113,4 +113,13 @@ class CompactSuffixTreeNode {
         this.isLeftDiverse = isLeftDiverse;
         this.indexStartPath = indexStartPath;
     }
+
+    @Override
+    public String toString() {
+        return "" +
+                "begin=" + begin +
+                ", end=" + end +
+                ", isLeftDiverse=" + isLeftDiverse +
+                ", indexStartPath=" + indexStartPath;
+    }
 }

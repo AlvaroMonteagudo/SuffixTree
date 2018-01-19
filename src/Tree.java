@@ -105,6 +105,7 @@ class CompactSuffixTree {
             }
         }
     }
+
     /*
      * Devuelve true en caso de que este el <pattern> en el texto almacenado en el arbol, 
      * false en caso contrario.
@@ -127,14 +128,14 @@ class CompactSuffixTree {
     			child = actual.children;//Cojo la lista de hijos
     			while(!fin){
     				hijoAct = child.get(i);
-    				//TODO: Como al ultimo caracter le dices q empieza en su pos y acaba en la de $ trunco aqui 
+    				//TODO: Como al ultimo caracter le dices q empieza en su pos y acaba en la de $ trunco aqui
     				if(hijoAct.end == maxLen){
     					len = (hijoAct.end-1) - hijoAct.begin ;
     				}
     				else{
     					len = hijoAct.end - hijoAct.begin ;
     				}
-    				
+
     				//Si no coincide el caracter
     				if(string.charAt(hijoAct.begin) !=pattern.charAt(pos)){
     					i++;
@@ -185,6 +186,8 @@ class CompactSuffixTree {
     	}		    			
     	return false;
     }
+
+
     private void insertNewNode(CompactSuffixTreeNode root, int from, int startIndexInWord) {
         CompactSuffixTreeNode node = root;
 
@@ -207,24 +210,24 @@ class CompactSuffixTree {
 
         // None child matched the character, insert new node
         if (idx == -1) {
-            root.children.add(new CompactSuffixTreeNode(from, string.length() - 1, false, startIndexInWord));
+            CompactSuffixTreeNode newNode = new CompactSuffixTreeNode(from, string.length() - 1, false, startIndexInWord);
+            root.children.add(newNode);
         } else if (node.begin + charactersInTree <= node.end) {
-            int start = from, end = from + charactersInTree - 1;
+            int end = from + charactersInTree - 1;
             char leftChar = (node.indexStartPath < 1) ? ' ' : string.charAt(node.indexStartPath - 1);
             char rightChar = (startIndexInWord < 1) ? ' ' : string.charAt(startIndexInWord - 1);
             boolean flag = node.isLeftDiverse || leftChar != rightChar;
-            CompactSuffixTreeNode newNode = new CompactSuffixTreeNode(start, end, flag, startIndexInWord);
-            
+            CompactSuffixTreeNode newNode = new CompactSuffixTreeNode(from, end, flag, startIndexInWord);
+
             if (newNode.isLeftDiverse) {
                 maximals.add(newNode);
             }
 
             int newDepth = from + charactersInTree - startIndexInWord;
-            if (newNode.children.size() != 0) {
-                if (newDepth > indexLongestSubstring) {
-                    indexLongestSubstring = newDepth;
-                    nodeLongestSubstring = newNode;
-                }
+
+            if (newDepth > indexLongestSubstring) {
+                indexLongestSubstring = newDepth;
+                nodeLongestSubstring = newNode;
             }
 
             node.begin += charactersInTree;

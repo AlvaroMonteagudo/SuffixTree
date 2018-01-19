@@ -29,11 +29,12 @@ public class Main {
     public static void main(String[] args) {
 
 
-        /*treeWord = "aaaab";
+        treeWord = "banana";
         CompactSuffixTree tree = new CompactSuffixTree(treeWord, 1);
-        System.out.println(tree.getLongestSubstring());*/
+        System.out.println(tree.getLongestSubstring());
+        System.out.println(tree.searchPattern("ana"));
 
-        parseArguments(args);
+        /*parseArguments(args);
 
         Scanner keyboard = new Scanner(in);
         out.print("Enter patern: ");
@@ -70,7 +71,7 @@ public class Main {
                 }
                 out.println(sb.toString());
             } else out.println("No maximals for the input word: " + treeWord);
-        }
+        }*/
     }
 
     /**
