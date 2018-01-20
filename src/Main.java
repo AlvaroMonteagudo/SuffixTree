@@ -31,10 +31,11 @@ public class Main {
 
 
 
-        treeWord = "banana";
+        treeWord = "xabxac";
         Timer timer = Timer.start();
         CompactSuffixTree tree = new CompactSuffixTree(treeWord, 0);
-        System.out.println(tree.searchPattern("ash"));
+        System.out.println(tree.search(tree.root, "xabx", 0));
+        //System.out.println(tree.searchPattern("anana"));
         //System.out.println(timer.time(TimeUnit.MICROSECONDS));
         //System.out.println("");
         //timer.reset();

@@ -75,7 +75,7 @@ class CompactSuffixTree {
     private String string;
 
     // Root node of the tree
-    private CompactSuffixTreeNode root;
+    public CompactSuffixTreeNode root;
 
     // List with nodes marked as maximals
     private ArrayList<CompactSuffixTreeNode> maximals;
@@ -104,6 +104,30 @@ class CompactSuffixTree {
                 insertNewNode(root, i, i);
             }
         }
+    }
+
+    public boolean search(CompactSuffixTreeNode current, String pattern, int pos) {
+        CompactSuffixTreeNode matchedNode = null;
+        System.out.println("in");
+        for (CompactSuffixTreeNode child : current.children) {
+            System.out.println(child.toString());
+            if (pattern.charAt(pos) == string.charAt(child.indexStartPath)) { // Match character
+                System.out.println(pattern.charAt(pos) + " " + string.charAt(child.indexStartPath));
+                matchedNode = child;
+                pos++;
+                System.out.println(pos);
+                for (int i = matchedNode.begin + 1; i <= matchedNode.end && pos < pattern.length(); ++i, ++pos) {
+                    System.out.println(pos + " " + i);
+                    System.out.println(pattern.charAt(pos) + " " + string.charAt(i));
+                    if (pattern.charAt(pos) != string.charAt(i)) {
+                        return false;
+                    }
+                }
+                if (pos == pattern.length()) return true;
+            }
+        }
+
+        return matchedNode != null && search(matchedNode, pattern, pos);
     }
 
     /*
