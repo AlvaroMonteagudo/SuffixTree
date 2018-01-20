@@ -90,11 +90,11 @@ class CompactSuffixTree {
      * Constructor for compacted suffix tree
      * @param word from which tree is built
      */
-    CompactSuffixTree(String word, int mode) {
+    CompactSuffixTree(String word, Main.AlgorithmFeatures feature) {
         string = "$" + word + "$";
         maximals = new ArrayList<>();
         // N CUADRADO
-        if (mode == 0) {
+        if (feature == Main.AlgorithmFeatures.N2) {
             SuffixTree tree = new SuffixTree(string);
             root = generateCompactSuffixTree(tree.getRoot(), 0);
         } else {
@@ -106,19 +106,34 @@ class CompactSuffixTree {
         }
     }
 
+    /**
+     * Constructor for compacted suffix tree
+     * @param words from which tree is built
+     */
+    CompactSuffixTree(String ... words) {
+        string = "$" + words[0] + "$";
+        maximals = new ArrayList<>();
+        SuffixTree tree = new SuffixTree(string);
+        for (int i = 1; i < words.length; i++) {
+            string = "$" + words[i] + "$";
+            tree.addWord(string);
+        }
+        root = generateCompactSuffixTree(tree.getRoot(), 0);
+    }
+
     public boolean search(CompactSuffixTreeNode current, String pattern, int pos) {
         CompactSuffixTreeNode matchedNode = null;
-        System.out.println("in");
+        //System.out.println("in");
         for (CompactSuffixTreeNode child : current.children) {
-            System.out.println(child.toString());
+            //System.out.println(child.toString());
             if (pattern.charAt(pos) == string.charAt(child.indexStartPath)) { // Match character
-                System.out.println(pattern.charAt(pos) + " " + string.charAt(child.indexStartPath));
+                //System.out.println(pattern.charAt(pos) + " " + string.charAt(child.indexStartPath));
                 matchedNode = child;
                 pos++;
-                System.out.println(pos);
+                //System.out.println(pos);
                 for (int i = matchedNode.begin + 1; i <= matchedNode.end && pos < pattern.length(); ++i, ++pos) {
-                    System.out.println(pos + " " + i);
-                    System.out.println(pattern.charAt(pos) + " " + string.charAt(i));
+                    //System.out.println(pos + " " + i);
+                    //System.out.println(pattern.charAt(pos) + " " + string.charAt(i));
                     if (pattern.charAt(pos) != string.charAt(i)) {
                         return false;
                     }
@@ -283,21 +298,6 @@ class CompactSuffixTree {
             }
             insertNewNode(node, from + charactersInTree, startIndexInWord);
         }
-    }
-
-    /**
-     * Constructor for compacted suffix tree
-     * @param words from which tree is built
-     */
-    CompactSuffixTree(String ... words) {
-        string = "$" + words[0] + "$";
-        SuffixTree tree = new SuffixTree(string);
-        for (int i = 1; i < words.length; i++) {
-            string = "$" + words[i] + "$";
-            tree.addWord(string);
-        }
-        maximals = new ArrayList<>();
-        root = generateCompactSuffixTree(tree.getRoot(), 0);
     }
 
     /**

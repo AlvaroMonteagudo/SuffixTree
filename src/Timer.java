@@ -25,4 +25,6 @@ public class Timer {
         return unit.convert(time(), TimeUnit.NANOSECONDS);
     }
 
+    public long convertTo(TimeUnit unit, long value) { return unit.convert(value, TimeUnit.NANOSECONDS); }
+
 }
