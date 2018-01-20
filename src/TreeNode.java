@@ -31,12 +31,15 @@ class SuffixTreeNode {
     // Helpful parameter to determine if a node is left diverse
     public int indexStartPath = DEFAULT_SYMBOL;
 
+    public char character = ' ';
+
 
     /**
      * Suffix tree node constructor
      * @param position value of the node
      */
     SuffixTreeNode(int position) {
+
         this.position = position;
     }
 
@@ -45,10 +48,11 @@ class SuffixTreeNode {
      * @param indexStartPath start path of the new node
      * @return new added node as children of this
      */
-    SuffixTreeNode addChildren(int position, int indexStartPath) {
+    SuffixTreeNode addChildren(int position, int indexStartPath, char character) {
         children.add(new SuffixTreeNode(position));
         SuffixTreeNode lastChildren = children.get(children.size() - 1);
         lastChildren.indexStartPath = indexStartPath;
+        lastChildren.character =  character;
         return lastChildren;
     }
 
@@ -79,6 +83,16 @@ class SuffixTreeNode {
             isLeftDiverse = true;
         }
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "position=" + position +
+                ", isLeftDiverse=" + isLeftDiverse +
+                ", indexStartPath=" + indexStartPath +
+                ", character=" + character +
+                '}';
+    }
 }
 
 /**
@@ -99,6 +113,10 @@ class CompactSuffixTreeNode {
     // Helpful parameter to determine if a node is left diverse
     public int indexStartPath = 0;
 
+    public String substring;
+
+    public int belongsTo;
+
 
     /**
      * Constructor for compacted suffix tree node
@@ -114,6 +132,24 @@ class CompactSuffixTreeNode {
         this.indexStartPath = indexStartPath;
     }
 
+    /**
+     * Constructor for compacted suffix tree node
+     * @param begin value of the node
+     * @param end value of the node
+     * @param isLeftDiverse flag
+     * @param indexStartPath
+     * @param substring
+     * @param belongsTo
+     */
+    CompactSuffixTreeNode(int begin, int end, boolean isLeftDiverse, int indexStartPath, String substring, int belongsTo) {
+        this.begin = begin;
+        this.end = end;
+        this.isLeftDiverse = isLeftDiverse;
+        this.indexStartPath = indexStartPath;
+        this.substring = substring;
+        this.belongsTo = belongsTo;
+    }
+
     @Override
     public String toString() {
         return "" +
@@ -123,3 +159,4 @@ class CompactSuffixTreeNode {
                 ", indexStartPath=" + indexStartPath;
     }
 }
+

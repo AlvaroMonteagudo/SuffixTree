@@ -38,13 +38,27 @@ public class Main {
 
         Scanner keyboard = new Scanner(in);
 
-        if (treeWord.equals("") && words.isEmpty()) {
+        /*if (treeWord.equals("") && words.isEmpty()) {
             out.print("Enter word: ");
             treeWord = keyboard.next();
             treeWord = removeSpecialChars(treeWord);
-        }
+        }*/
 
-        if (timeComparision) {
+        SuffixTree tree = new SuffixTree("$banana$");
+        tree.addWord("lo");
+
+        /*CompactSuffixTree tree = new CompactSuffixTree("banana", feature);
+        tree.addWord("xabana");
+        System.out.println(tree.search(tree.root, "ana", 0));
+        System.out.println(tree.search(tree.root, "nan", 0));
+        System.out.println(tree.search(tree.root, "ba", 0));
+        System.out.println(tree.search(tree.root, "anana", 0));
+        System.out.println(tree.search(tree.root, "nana", 0));
+        System.out.println(tree.search(tree.root, "anax", 0));*/
+
+
+
+        /*if (timeComparision) {
 
             Timer timer = Timer.start();
 
@@ -107,7 +121,7 @@ public class Main {
                     out.println(sb.toString() + "\n");
                 } else out.println("No maximals for the input word: " + treeWord + "\n");
             }
-        }
+        }*/
     }
 
     /**
