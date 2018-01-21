@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -21,7 +20,7 @@ class CompactSuffixTree {
     // Node where longest repeated substring starts
     private CompactSuffixTreeNode nodeLongestSubstring = null;
 
-    private ArrayList<String> treeWords;
+    private String substring;
 
     /**
      * Constructor for compacted suffix tree
@@ -30,8 +29,6 @@ class CompactSuffixTree {
     CompactSuffixTree(String word, Main.AlgorithmFeatures feature) {
         string = "$" + word + "$";
         maximals = new ArrayList<>();
-        treeWords = new ArrayList<>();
-        treeWords.add(string);
 
         // N CUADRADO
         if (feature == Main.AlgorithmFeatures.N2) {
@@ -46,13 +43,33 @@ class CompactSuffixTree {
         }
     }
 
+    /**
+     * Constructor for compacted suffix tree
+     * @param words from which tree is built
+     */
+    CompactSuffixTree(String [] words, Main.AlgorithmFeatures feature) {
+        string = "$" + words[0] + "$";
+        maximals = new ArrayList<>();
+
+        // N CUADRADO
+        if (feature == Main.AlgorithmFeatures.N2) {
+            SuffixTree tree = new SuffixTree(string);
+            for (int i = 1; i < words.length; i++) {
+                tree.addWord(words[i],0);
+            }
+            root = generateCompactSuffixTree(tree.getRoot(), 0);
+        } else {
+            // N LOG N
+            root = new CompactSuffixTreeNode(-1, -1, false, 0);
+            for (int i = 1; i < string.length() - 1; i++) {
+                insertNewNode(root, i, i);
+            }
+        }
+    }
+
 
     public void addWord(String word) {
-        string = "$" + word + "$";
-        for (int i = 1; i < string.length() - 1; i++) {
-            insertNewNode(root, i, i);
-        }
-        treeWords.add(string);
+
     }
 
     public boolean search(CompactSuffixTreeNode current, String pattern, int pos) {
@@ -73,7 +90,6 @@ class CompactSuffixTree {
                 if (pos == pattern.length()) return true;
             }
         }
-
         return matchedNode != null && search(matchedNode, pattern, pos);
     }
 

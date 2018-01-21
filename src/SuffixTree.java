@@ -8,27 +8,24 @@
  *
  */
 
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
 /**
  * Implementation of a basic suffix tree
  */
 class SuffixTree {
 
     // Root of the tree
-    private SuffixTreeNode root;
+    public SuffixTreeNode root;
 
     /**
      * Suffix tree constructor
      * @param word from which the tree is built.
      */
     SuffixTree(String word) {
+        //System.out.println(word);
         root = new SuffixTreeNode(-1);
 
         for (int i = 1; i < word.length() - 1; ++i) {
-            System.out.println();
+            //System.out.println();
             SuffixTreeNode current = root;
             int len = 0;
 
@@ -54,21 +51,60 @@ class SuffixTree {
                 current.updateLeftDiverse(i, word);
             }
 
+            //System.out.println("Añadiendo a: " + current.toString());
             // Add new characters that are not in the tree yet.
             for (int j = i + len; j < word.length(); j++) {
                 current = current.addChildren(j, i, word.charAt(j));
+                //System.out.println(current.toString());
             }
         }
     }
 
-    public void addWord(String word) {
-        SuffixTreeNode current = root;
+    public void addWord(String word, int pos) {
+        word += "$";
 
-        System.out.println("ADD WORD");
+        //System.out.println("ADD WORD " + word);
+
+        for (int i = 0; i < word.length() - 1; i++) {
+            addSuffixes(root, i, word);
+        }
+    }
+
+    private void addSuffixes(SuffixTreeNode current, int i, String word) {
+        SuffixTreeNode foundChild = null;
+        for (SuffixTreeNode child : current.children) {
+            if (child.character == word.charAt(i)) {
+                //System.out.println(child.toString());
+                //foundChild = child;
+                i++;
+                addSuffixes(child, i, word);
+                return;
+            }
+        }
+
+        //if (foundChild == null) {
+            // Add new characters that are not in the tree yet.
+        //System.out.println("HIJOS");
+            for (int j = i; j < word.length(); j++) {
+                current = current.addChildren(j, i, word.charAt(j));
+                //System.out.println(current.toString());
+            }
+        //System.out.println();
+        //}
+    }
+
+    public boolean search(SuffixTreeNode current, String pattern, int pos) {
+        SuffixTreeNode matchedNode = null;
 
         for (SuffixTreeNode child : current.children) {
-            System.out.println(child.toString());
+            if (pattern.charAt(pos) == child.character) { // Match character
+
+                matchedNode = child;
+                pos++;
+                if (pos == pattern.length()) return true;
+            }
         }
+        return matchedNode != null && search(matchedNode, pattern, pos);
     }
 
     // Root of the tree

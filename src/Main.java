@@ -9,7 +9,6 @@
  */
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -23,42 +22,25 @@ public class Main {
         N2, NLGN
     }
 
-    private static boolean getLongest = false, getMaximals = false, timeComparision = false;
+    private static boolean getLongest = false, getMaximals = false, timeComparision = false, compacted = false;
     private static String treeWord = "", pattern = "", filename = "";
     private static ArrayList<String> words = new ArrayList<>();
-    private static AlgorithmFeatures feature = AlgorithmFeatures.NLGN;
+    private static AlgorithmFeatures feature = AlgorithmFeatures.N2;
 
-    /**
-     * Main methodnana
-     * @param args
-     */
     public static void main(String[] args) {
 
         parseArguments(args);
 
+
         Scanner keyboard = new Scanner(in);
 
-        /*if (treeWord.equals("") && words.isEmpty()) {
+        if (treeWord.equals("")) {
             out.print("Enter word: ");
             treeWord = keyboard.next();
             treeWord = removeSpecialChars(treeWord);
-        }*/
+        }
 
-        SuffixTree tree = new SuffixTree("$banana$");
-        tree.addWord("lo");
-
-        /*CompactSuffixTree tree = new CompactSuffixTree("banana", feature);
-        tree.addWord("xabana");
-        System.out.println(tree.search(tree.root, "ana", 0));
-        System.out.println(tree.search(tree.root, "nan", 0));
-        System.out.println(tree.search(tree.root, "ba", 0));
-        System.out.println(tree.search(tree.root, "anana", 0));
-        System.out.println(tree.search(tree.root, "nana", 0));
-        System.out.println(tree.search(tree.root, "anax", 0));*/
-
-
-
-        /*if (timeComparision) {
+        if (timeComparision) {
 
             Timer timer = Timer.start();
 
@@ -88,40 +70,55 @@ public class Main {
 
         } else {
 
-            out.print("Enter pattern: ");
-            pattern = keyboard.next();
-            pattern = removeSpecialChars(pattern);
+            if (!compacted) {
 
-            CompactSuffixTree tree;
-            if (!words.isEmpty()) {
-                out.println("Input words in file: " + filename);
-                tree = new CompactSuffixTree(words.toArray(new String[words.size()]));
-            } else {
-                tree = new CompactSuffixTree(treeWord, feature);
-            }
-
-            if (tree.search(tree.root, pattern, 0)) System.out.println("Pattern found in tree");
-            else out.println("Pattern not found");
-
-
-            out.println();
-
-            if (getLongest) out.println("Longest repeated substring: " + tree.getLongestSubstring() + "\n");
-            if (getMaximals) {
-                ArrayList<String> maximals = tree.getMaximals();
-                if (!maximals.isEmpty()) {
-                    StringBuilder sb = new StringBuilder("Maximals are:\n\t");
-                    for (int i = 1; i <= maximals.size(); i++) {
-                        sb.append(maximals.get(i - 1));
-                        sb = (i == (maximals.size())) ? sb.append("") : sb.append(", ");
-                        if (i % 5 == 0) {
-                            sb.append('\n').append('\t');
-                        }
+                System.out.println("Creating tree with: " + treeWord);
+                SuffixTree tree = new SuffixTree("$" + treeWord + "$");
+                if (!words.isEmpty()) {
+                    for (String word: words) {
+                        System.out.println("Adding word to tree: " + word);
+                        tree.addWord(word, 0);
                     }
-                    out.println(sb.toString() + "\n");
-                } else out.println("No maximals for the input word: " + treeWord + "\n");
+                }
+
+                out.print("Enter pattern: ");
+                pattern = keyboard.next();
+                pattern = removeSpecialChars(pattern);
+
+                if (tree.search(tree.root, pattern, 0)) System.out.println("Pattern found in tree");
+                else out.println("Pattern not found");
+            } else {
+
+                CompactSuffixTree compactTree = (words.isEmpty()) ?
+                        new CompactSuffixTree(treeWord, feature) :
+                        new CompactSuffixTree(words.toArray(new String [0]), feature);
+
+                out.print("Enter pattern: ");
+                pattern = keyboard.next();
+                pattern = removeSpecialChars(pattern);
+
+                if (compactTree.search(compactTree.root, pattern, 0)) System.out.println("Pattern found in tree");
+                else out.println("Pattern not found");
+
+                out.println();
+
+                if (getLongest) out.println("Longest repeated substring: " + compactTree.getLongestSubstring() + "\n");
+                if (getMaximals) {
+                    ArrayList<String> maximals = compactTree.getMaximals();
+                    if (!maximals.isEmpty()) {
+                        StringBuilder sb = new StringBuilder("Maximals are:\n\t");
+                        for (int i = 1; i <= maximals.size(); i++) {
+                            sb.append(maximals.get(i - 1));
+                            sb = (i == (maximals.size())) ? sb.append("") : sb.append(", ");
+                            if (i % 5 == 0) {
+                                sb.append('\n').append('\t');
+                            }
+                        }
+                        out.println(sb.toString() + "\n");
+                    } else out.println("No maximals for the input word: " + treeWord + "\n");
+                }
             }
-        }*/
+        }
     }
 
     /**
@@ -134,16 +131,19 @@ public class Main {
                 case "-cost":
                     ++i;
                     switch (args[i]) {
-                        case "N2":
+                        case "n2" :
                             feature = AlgorithmFeatures.N2;
                             break;
-                        case "NLGN":
+                        case "nlgn":
                             feature = AlgorithmFeatures.NLGN;
                             break;
                         default:
-                            System.out.println("Feature not available. Try: N2, NLGN, MS, US ó NS, -h for detailed info");
+                            System.out.println("Feature not available. Try: n2 or nlgn.");
                             break;
                     }
+                    break;
+                case "-compact" :
+                    compacted = true;
                     break;
                 case "-time" :
                     timeComparision = true;
@@ -201,11 +201,12 @@ public class Main {
                 "All credits to: Brenden Kokoszka. Git user: https://github.com/brenden");
         out.println("Available options:");
         out.println("\t-time: prints a comparision table of tree's construction time, n squared vs n log n.");
+        out.println("\t-compacted: compact the tree.");
         out.println("\t-cost <STRING>: n2 or nlgn tree construction, nlgn by default.");
         out.println("\t-longest: get the longest repeated substring.");
         out.println("\t-maximals: get all maximal repetitions in the string.");
         out.println("\t-random <INTEGER>: generate a random word with n characters.");
-        out.println("\t-file <INTEGER> <STRING>: number of texts to read from file.");
+        out.println("\t-file <INTEGER> <STRING>: number of texts to read from file, if -1 all words in file will be added.");
         out.println("\t-h: this helpful message.");
         out.println();
     }
@@ -221,11 +222,14 @@ public class Main {
             try {
                 s = new Scanner(f);
                 s.useDelimiter(" +");
-                while (n > 0) {
+                treeWord = s.next();
+                --n;
+                boolean condition;
+                while (condition = (n < 0) ? s.hasNext() : n > 0) {
                     String word = removeSpecialChars(s.next());
                     if (!word.trim().equals("")) {
                         words.add(word);
-                        --n;
+                        if (n > 0) --n;
                     }
                 }
                 s.close();
@@ -233,7 +237,7 @@ public class Main {
             catch (Exception ex) {
                 err.println("Trace: " + Arrays.toString(ex.getStackTrace()) + ". Message: " + ex.getMessage());
             }
-        }
+        } else System.out.println("File does not exist");
         return words;
     }
 
