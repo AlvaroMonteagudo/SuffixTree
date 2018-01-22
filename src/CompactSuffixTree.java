@@ -105,7 +105,7 @@ class CompactSuffixTree {
             if (string.charAt(from) == string.charAt(child.begin)) {
                 node = child;
                 idx = i;
-                while (((child.begin + charactersInTree) < child.end) &&
+                while (((child.begin + charactersInTree) <= child.end) &&
                         (string.charAt(child.begin + charactersInTree) ==
                                 string.charAt(from + charactersInTree))) {
                     charactersInTree++;

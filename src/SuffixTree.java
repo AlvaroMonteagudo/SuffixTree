@@ -74,23 +74,16 @@ class SuffixTree {
         SuffixTreeNode foundChild = null;
         for (SuffixTreeNode child : current.children) {
             if (child.character == word.charAt(i)) {
-                //System.out.println(child.toString());
-                //foundChild = child;
                 i++;
                 addSuffixes(child, i, word);
                 return;
             }
         }
 
-        //if (foundChild == null) {
-            // Add new characters that are not in the tree yet.
-        //System.out.println("HIJOS");
-            for (int j = i; j < word.length(); j++) {
-                current = current.addChildren(j, i, word.charAt(j));
-                //System.out.println(current.toString());
-            }
-        //System.out.println();
-        //}
+        for (int j = i; j < word.length(); j++) {
+            current = current.addChildren(j, i, word.charAt(j));
+            //System.out.println(current.toString());
+        }
     }
 
     public boolean search(SuffixTreeNode current, String pattern, int pos) {
