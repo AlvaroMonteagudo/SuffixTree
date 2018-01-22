@@ -20,7 +20,6 @@ class CompactSuffixTree {
     // Node where longest repeated substring starts
     private CompactSuffixTreeNode nodeLongestSubstring = null;
 
-    private String substring;
 
     /**
      * Constructor for compacted suffix tree
@@ -77,20 +76,24 @@ class CompactSuffixTree {
         CompactSuffixTreeNode matchedNode = null;
 
         int aux = pos;
+        System.out.println(current.substring);
+        System.out.println(pattern);
 
         for (CompactSuffixTreeNode child : current.children) {
             int i = 0;
             pos = aux;
-            while (pattern.charAt(pos) == substring.charAt(i)
-                    && pos < pattern.length()
-                    && pos < substring.length()) { // Match character
-
+            System.out.println(i + " " + pos);
+            while (pos < pattern.length() && pos < child.substring.length()
+                    && pattern.charAt(pos) == child.substring.charAt(i)) { // Match character
                 i++;
                 pos++;
             }
 
             if (pos == pattern.length() - 1) return true;
-            else if (pos == substring.length() -1) matchedNode = child;
+            else if (pos == child.substring.length() -1) {
+                matchedNode = child;
+                break;
+            }
         }
         return matchedNode != null && search(matchedNode, pattern, pos);
     }
