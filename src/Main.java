@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.System.*;
@@ -207,12 +208,14 @@ public class Main {
         pattern = removeSpecialChars(pattern);
 
         while(!pattern.equals("0")){
-            ArrayList<Integer> listOfWords = tree.search(tree.root, pattern, 0);
+            Set<Integer> listOfWords = tree.search(tree.root, pattern, 0);
             if (listOfWords.isEmpty()) System.out.println("Pattern not found in tree\n");
             else {
                 StringBuilder sb = new StringBuilder("Pattern found in this/these words\n");
-                for (int i = 0; i < listOfWords.size(); i++) {
-                    sb.append(words.get(listOfWords.get(i))).append("\t");
+                int i = 0;
+                for (int index : listOfWords) {
+                    ++i;
+                    sb.append(words.get(index)).append("\t");
                     if (i % 5 == 0) sb.append('\n');
                 }
                 out.println(sb.toString());

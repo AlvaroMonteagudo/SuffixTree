@@ -8,8 +8,9 @@
  *
  */
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Class that represents a basic default suffix tree node.
@@ -34,7 +35,7 @@ class SuffixTreeNode {
 
     public char character = ' ';
 
-    public ArrayList<Integer> listOfWords = new ArrayList<>();
+    public Set<Integer> listOfWords = new HashSet<>();
 
 
     /**
@@ -89,12 +90,11 @@ class SuffixTreeNode {
 
     @Override
     public String toString() {
-        return "{" +
-                "position=" + position +
+        return  "position=" + position +
                 ", isLeftDiverse=" + isLeftDiverse +
                 ", indexStartPath=" + indexStartPath +
                 ", character=" + character +
-                '}';
+                ", words=" + listOfWords;
     }
 }
 
@@ -118,7 +118,7 @@ class CompactSuffixTreeNode {
 
     public String substring;
 
-    public ArrayList<Integer> listOfWords = new ArrayList<>();
+    public Set<Integer> listOfWords = new HashSet<>();
 
 
     /**
@@ -144,7 +144,7 @@ class CompactSuffixTreeNode {
      * @param substring
      * @param listOfWords list of words the node belongs to
      */
-    CompactSuffixTreeNode(int begin, int end, boolean isLeftDiverse, int indexStartPath, String substring, ArrayList<Integer> listOfWords) {
+    CompactSuffixTreeNode(int begin, int end, boolean isLeftDiverse, int indexStartPath, String substring, Set<Integer> listOfWords) {
         this.begin = begin;
         this.end = end;
         this.isLeftDiverse = isLeftDiverse;
@@ -160,7 +160,8 @@ class CompactSuffixTreeNode {
                 ", end=" + end +
                 ", isLeftDiverse=" + isLeftDiverse +
                 ", indexStartPath=" + indexStartPath +
-                ", substring=" + substring;
+                ", substring=" + substring +
+                ", words=" + listOfWords;
     }
 }
 

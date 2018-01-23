@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Implementation of a basic compacted suffix tree
@@ -71,7 +73,7 @@ class CompactSuffixTree {
 
     }
 
-    public ArrayList<Integer> search(CompactSuffixTreeNode current, String pattern, int pos) {
+    public Set<Integer> search(CompactSuffixTreeNode current, String pattern, int pos) {
 
         CompactSuffixTreeNode matchedNode = null;
 
@@ -93,7 +95,7 @@ class CompactSuffixTree {
                 break;
             }
         }
-        return (matchedNode != null) ? search(matchedNode, pattern, pos) : new ArrayList<Integer>();
+        return (matchedNode != null) ? search(matchedNode, pattern, pos) : new HashSet<>();
     }
 
     private void insertNewNode(CompactSuffixTreeNode root, int from, int startIndexInWord) {

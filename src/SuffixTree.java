@@ -56,7 +56,6 @@ class SuffixTree {
             for (int j = i + len; j < word.length() - 1; j++) {
                 current = current.addChildren(j, i, word.charAt(j));
                 current.listOfWords.add(0);
-                //System.out.println(current.toString());
             }
         }
     }
@@ -73,6 +72,7 @@ class SuffixTree {
         SuffixTreeNode foundChild = null;
         for (SuffixTreeNode child : current.children) {
             if (child.character == word.charAt(i)) {
+                child.listOfWords.add(numberOfWord);
                 //System.out.println(child.toString());
                 //foundChild = child;
                 i++;
@@ -81,10 +81,11 @@ class SuffixTree {
             }
         }
 
-        //System.out.println("PADRE: " + current.toString());
+        System.out.println("PADRE: " + current.toString());
         for (int j = i; j < word.length() - 1; j++) {
             current = current.addChildren(j + 1, i, word.charAt(j));
             current.listOfWords.add(numberOfWord);
+            System.out.println(current);
             //System.out.println("AÑADIDO " + current.toString());
         }
 
