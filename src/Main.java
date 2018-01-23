@@ -28,6 +28,7 @@ public class Main {
     private static String pattern = "";
     private static ArrayList<String> words = new ArrayList<>();
     private static AlgorithmFeatures feature = AlgorithmFeatures.N2;
+    private static int longestLength = 0;
 
     /**
      * Prints instructions of use
@@ -72,17 +73,7 @@ public class Main {
 
         if (time) printComparingTable();
 
-        out.print("Creating tree with: " + treeWord);
-
-        for (String word : words) {
-            out.print(" " + word);
-        }
-        out.println();
-        /*SuffixTree tree = new SuffixTree("$" + treeWord + "$");
-
-        if (!words.isEmpty()) addWords(tree, words);
-
-        searchPatterns(keyboard, tree);*/
+        out.print("Creating tree.");
 
         CompactSuffixTree compactTree = (words.isEmpty()) ?
                     new CompactSuffixTree(treeWord, feature) :
@@ -174,6 +165,7 @@ public class Main {
                 boolean condition;
                 while (condition = (n < 0) ? s.hasNext() : n > 0) {
                     String word = removeSpecialChars(s.next());
+                    if (word.length() > longestLength) longestLength = word.length();
                     if (!word.trim().equals("")) {
                         words.add(word);
                         if (n > 0) --n;
@@ -215,7 +207,7 @@ public class Main {
                 int i = 0;
                 for (int index : listOfWords) {
                     ++i;
-                    sb.append(words.get(index)).append("\t");
+                    sb.append(String.format("%" + longestLength + "s", words.get(index))).append("\t");
                     if (i % 5 == 0) sb.append('\n');
                 }
                 out.println(sb.toString());

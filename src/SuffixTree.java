@@ -73,38 +73,18 @@ class SuffixTree {
         for (SuffixTreeNode child : current.children) {
             if (child.character == word.charAt(i)) {
                 child.listOfWords.add(numberOfWord);
-                //System.out.println(child.toString());
-                //foundChild = child;
                 i++;
                 addSuffixes(child, i, word, numberOfWord);
                 return;
             }
         }
 
-        System.out.println("PADRE: " + current.toString());
         for (int j = i; j < word.length() - 1; j++) {
             current = current.addChildren(j + 1, i, word.charAt(j));
             current.listOfWords.add(numberOfWord);
-            System.out.println(current);
-            //System.out.println("AÑADIDO " + current.toString());
         }
 
     }
-
-    public boolean search(SuffixTreeNode current, String pattern, int pos) {
-        SuffixTreeNode matchedNode = null;
-
-        for (SuffixTreeNode child : current.children) {
-            if (pattern.charAt(pos) == child.character) { // Match character
-
-                matchedNode = child;
-                pos++;
-                if (pos == pattern.length()) return true;
-            }
-        }
-        return matchedNode != null && search(matchedNode, pattern, pos);
-    }
-
     // Root of the tree
     public SuffixTreeNode getRoot() {
         return root;
