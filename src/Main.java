@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.System.*;
@@ -27,6 +28,7 @@ public class Main {
     private static String pattern = "";
     private static ArrayList<String> words = new ArrayList<>();
     private static AlgorithmFeatures feature = AlgorithmFeatures.N2;
+    private static int longestLength = 0;
 
     /**
      * Prints instructions of use
@@ -71,17 +73,7 @@ public class Main {
 
         if (time) printComparingTable();
 
-        out.print("Creating tree with: " + treeWord);
-
-        for (String word : words) {
-            out.print(" " + word);
-        }
-        out.println();
-        /*SuffixTree tree = new SuffixTree("$" + treeWord + "$");
-
-        if (!words.isEmpty()) addWords(tree, words);
-
-        searchPatterns(keyboard, tree);*/
+        out.print("Creating tree.");
 
         CompactSuffixTree compactTree = (words.isEmpty()) ?
                     new CompactSuffixTree(treeWord, feature) :
@@ -173,6 +165,7 @@ public class Main {
                 boolean condition;
                 while (condition = (n < 0) ? s.hasNext() : n > 0) {
                     String word = removeSpecialChars(s.next());
+                    if (word.length() > longestLength) longestLength = word.length();
                     if (!word.trim().equals("")) {
                         words.add(word);
                         if (n > 0) --n;
@@ -197,19 +190,6 @@ public class Main {
     }
 
     /**
-     * Add words to a suffix tree to make it a generalized suffix tree
-     * @param tree to add words to
-     * @param words to be added to the tree
-     */
-    private static void addWords(SuffixTree tree, ArrayList<String> words) {
-        for (String word: words) {
-            out.println("Adding word to tree: " + word);
-            tree.addWord(word, 0);
-        }
-        out.println();
-    }
-
-    /**
      * Search patterns until end condition satisfies
      * @param keyboard input from which read the patterns
      * @param tree compacted tree where patterns ae looked in
@@ -220,27 +200,18 @@ public class Main {
         pattern = removeSpecialChars(pattern);
 
         while(!pattern.equals("0")){
-            if (tree.search(tree.root, pattern, 0)) System.out.println("Pattern found in tree\n");
-            else out.println("Pattern not found\n");
-            out.print("Enter pattern (0 to exit): ");
-            pattern = keyboard.next();
-            pattern = removeSpecialChars(pattern);
-        }
-    }
-
-    /**
-     * Search patterns until end condition satisfies
-     * @param keyboard input from which read the patterns
-     * @param tree suffix tree where patterns ae looked in
-     */
-    private static void searchPatterns(Scanner keyboard, SuffixTree tree) {
-        out.print("Enter pattern (0 to exit): ");
-        pattern = keyboard.next();
-        pattern = removeSpecialChars(pattern);
-
-        while(!pattern.equals("0")){
-            if (tree.search(tree.root, pattern, 0)) System.out.println("Pattern found in tree\n");
-            else out.println("Pattern not found\n");
+            Set<Integer> listOfWords = tree.search(tree.root, pattern, 0);
+            if (listOfWords.isEmpty()) System.out.println("Pattern not found in tree\n");
+            else {
+                StringBuilder sb = new StringBuilder("Pattern found in this/these words\n");
+                int i = 0;
+                for (int index : listOfWords) {
+                    ++i;
+                    sb.append(String.format("%" + longestLength + "s", words.get(index))).append("\t");
+                    if (i % 5 == 0) sb.append('\n');
+                }
+                out.println(sb.toString());
+            }
             out.print("Enter pattern (0 to exit): ");
             pattern = keyboard.next();
             pattern = removeSpecialChars(pattern);

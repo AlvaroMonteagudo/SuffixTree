@@ -55,53 +55,36 @@ class SuffixTree {
             // Add new characters that are not in the tree yet.
             for (int j = i + len; j < word.length() - 1; j++) {
                 current = current.addChildren(j, i, word.charAt(j));
-                //System.out.println(current.toString());
+                current.listOfWords.add(0);
             }
         }
     }
 
-    public void addWord(String word, int pos) {
+    public void addWord(String word, int pos, int numberOfWord) {
         word += "$";
 
         for (int i = 0; i < word.length() - 1; i++) {
-            addSuffixes(root, i, word);
+            addSuffixes(root, i, word, numberOfWord);
         }
     }
 
-    private void addSuffixes(SuffixTreeNode current, int i, String word) {
+    private void addSuffixes(SuffixTreeNode current, int i, String word, int numberOfWord) {
         SuffixTreeNode foundChild = null;
         for (SuffixTreeNode child : current.children) {
             if (child.character == word.charAt(i)) {
-                //System.out.println(child.toString());
-                //foundChild = child;
+                child.listOfWords.add(numberOfWord);
                 i++;
-                addSuffixes(child, i, word);
+                addSuffixes(child, i, word, numberOfWord);
                 return;
             }
         }
 
-        //System.out.println(current.toString());
         for (int j = i; j < word.length() - 1; j++) {
-            current = current.addChildren(j, i, word.charAt(j));
-            //System.out.println("AÑADIDO " + current.toString());
+            current = current.addChildren(j + 1, i, word.charAt(j));
+            current.listOfWords.add(numberOfWord);
         }
 
     }
-
-    public boolean search(SuffixTreeNode current, String pattern, int pos) {
-        SuffixTreeNode matchedNode = null;
-
-        for (SuffixTreeNode child : current.children) {
-            if (pattern.charAt(pos) == child.character) { // Match character
-
-                matchedNode = child;
-                pos++;
-                if (pos == pattern.length()) return true;
-            }
-        }
-        return matchedNode != null && search(matchedNode, pattern, pos);
-    }
-
     // Root of the tree
     public SuffixTreeNode getRoot() {
         return root;

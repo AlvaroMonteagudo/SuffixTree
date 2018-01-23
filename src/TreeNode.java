@@ -9,6 +9,8 @@
  */
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Class that represents a basic default suffix tree node.
@@ -32,6 +34,8 @@ class SuffixTreeNode {
     public int indexStartPath = DEFAULT_SYMBOL;
 
     public char character = ' ';
+
+    public Set<Integer> listOfWords = new HashSet<>();
 
 
     /**
@@ -86,12 +90,11 @@ class SuffixTreeNode {
 
     @Override
     public String toString() {
-        return "{" +
-                "position=" + position +
+        return  "position=" + position +
                 ", isLeftDiverse=" + isLeftDiverse +
                 ", indexStartPath=" + indexStartPath +
                 ", character=" + character +
-                '}';
+                ", words=" + listOfWords;
     }
 }
 
@@ -115,7 +118,7 @@ class CompactSuffixTreeNode {
 
     public String substring;
 
-    public int belongsTo;
+    public Set<Integer> listOfWords = new HashSet<>();
 
 
     /**
@@ -139,15 +142,15 @@ class CompactSuffixTreeNode {
      * @param isLeftDiverse flag
      * @param indexStartPath
      * @param substring
-     * @param belongsTo
+     * @param listOfWords list of words the node belongs to
      */
-    CompactSuffixTreeNode(int begin, int end, boolean isLeftDiverse, int indexStartPath, String substring, int belongsTo) {
+    CompactSuffixTreeNode(int begin, int end, boolean isLeftDiverse, int indexStartPath, String substring, Set<Integer> listOfWords) {
         this.begin = begin;
         this.end = end;
         this.isLeftDiverse = isLeftDiverse;
         this.indexStartPath = indexStartPath;
         this.substring = substring;
-        this.belongsTo = belongsTo;
+        this.listOfWords = listOfWords;
     }
 
     @Override
@@ -156,7 +159,9 @@ class CompactSuffixTreeNode {
                 "begin=" + begin +
                 ", end=" + end +
                 ", isLeftDiverse=" + isLeftDiverse +
-                ", indexStartPath=" + indexStartPath;
+                ", indexStartPath=" + indexStartPath +
+                ", substring=" + substring +
+                ", words=" + listOfWords;
     }
 }
 

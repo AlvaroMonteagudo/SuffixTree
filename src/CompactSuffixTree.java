@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Implementation of a basic compacted suffix tree
@@ -54,7 +56,7 @@ class CompactSuffixTree {
         if (feature == Main.AlgorithmFeatures.N2) {
             SuffixTree tree = new SuffixTree(string);
             for (int i = 1; i < words.length; i++) {
-                tree.addWord(words[i],0);
+                tree.addWord(words[i],0, i);
             }
             root = generateCompactSuffixTree(tree.getRoot(), 0);
         } else {
@@ -71,32 +73,29 @@ class CompactSuffixTree {
 
     }
 
-    public boolean search(CompactSuffixTreeNode current, String pattern, int pos) {
+    public Set<Integer> search(CompactSuffixTreeNode current, String pattern, int pos) {
 
         CompactSuffixTreeNode matchedNode = null;
 
         int aux = pos;
 
-        System.out.println(pattern);
-
         for (CompactSuffixTreeNode child : current.children) {
-            System.out.println(child.substring);
             int i = 0;
             pos = aux;
-            System.out.println(i + " " + pos);
-            while (pos < pattern.length() && pos < child.substring.length()
+            while (pos < pattern.length() && i < child.substring.length()
                     && pattern.charAt(pos) == child.substring.charAt(i)) { // Match character
+                //System.out.println(pattern.charAt(pos) + " " + child.substring.charAt(i));
                 i++;
                 pos++;
             }
 
-            if (pos == pattern.length() - 1) return true;
-            else if (pos == child.substring.length() -1) {
+            if (pos == pattern.length()) return child.listOfWords;
+            else if (i == child.substring.length()) {
                 matchedNode = child;
                 break;
             }
         }
-        return matchedNode != null && search(matchedNode, pattern, pos);
+        return (matchedNode != null) ? search(matchedNode, pattern, pos) : new HashSet<>();
     }
 
     private void insertNewNode(CompactSuffixTreeNode root, int from, int startIndexInWord) {
@@ -172,18 +171,18 @@ class CompactSuffixTree {
         StringBuilder sb = new StringBuilder("" + node.character);
 
         // Compact into one single node all consecutive nodes with one children
-        System.out.println(node);
+        //System.out.println(node);
         //System.out.println();
         while (node.children.size() == 1) {
             node = node.children.get(0);
             sb.append(node.character);
-            System.out.println(node.toString());
+            //System.out.println(node.toString());
         }
-        System.out.println();
+        //System.out.println();
 
         int end = node.position;
 
-        result = new CompactSuffixTreeNode(start, end, node.isLeftDiverse, node.indexStartPath, sb.toString(), 0);
+        result = new CompactSuffixTreeNode(start, end, node.isLeftDiverse, node.indexStartPath, sb.toString(), node.listOfWords);
 
         if (depth != 0 && node.children.size() > 0 && node.isLeftDiverse) {
             maximals.add(result);
