@@ -197,19 +197,6 @@ public class Main {
     }
 
     /**
-     * Add words to a suffix tree to make it a generalized suffix tree
-     * @param tree to add words to
-     * @param words to be added to the tree
-     */
-    private static void addWords(SuffixTree tree, ArrayList<String> words) {
-        for (String word: words) {
-            out.println("Adding word to tree: " + word);
-            tree.addWord(word, 0);
-        }
-        out.println();
-    }
-
-    /**
      * Search patterns until end condition satisfies
      * @param keyboard input from which read the patterns
      * @param tree compacted tree where patterns ae looked in
@@ -220,27 +207,16 @@ public class Main {
         pattern = removeSpecialChars(pattern);
 
         while(!pattern.equals("0")){
-            if (tree.search(tree.root, pattern, 0)) System.out.println("Pattern found in tree\n");
-            else out.println("Pattern not found\n");
-            out.print("Enter pattern (0 to exit): ");
-            pattern = keyboard.next();
-            pattern = removeSpecialChars(pattern);
-        }
-    }
-
-    /**
-     * Search patterns until end condition satisfies
-     * @param keyboard input from which read the patterns
-     * @param tree suffix tree where patterns ae looked in
-     */
-    private static void searchPatterns(Scanner keyboard, SuffixTree tree) {
-        out.print("Enter pattern (0 to exit): ");
-        pattern = keyboard.next();
-        pattern = removeSpecialChars(pattern);
-
-        while(!pattern.equals("0")){
-            if (tree.search(tree.root, pattern, 0)) System.out.println("Pattern found in tree\n");
-            else out.println("Pattern not found\n");
+            ArrayList<Integer> listOfWords = tree.search(tree.root, pattern, 0);
+            if (listOfWords.isEmpty()) System.out.println("Pattern not found in tree\n");
+            else {
+                StringBuilder sb = new StringBuilder("Pattern found in this/these words\n");
+                for (int i = 0; i < listOfWords.size(); i++) {
+                    sb.append(words.get(listOfWords.get(i))).append("\t");
+                    if (i % 5 == 0) sb.append('\n');
+                }
+                out.println(sb.toString());
+            }
             out.print("Enter pattern (0 to exit): ");
             pattern = keyboard.next();
             pattern = removeSpecialChars(pattern);

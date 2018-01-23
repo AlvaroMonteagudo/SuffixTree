@@ -55,34 +55,36 @@ class SuffixTree {
             // Add new characters that are not in the tree yet.
             for (int j = i + len; j < word.length() - 1; j++) {
                 current = current.addChildren(j, i, word.charAt(j));
+                current.listOfWords.add(0);
                 //System.out.println(current.toString());
             }
         }
     }
 
-    public void addWord(String word, int pos) {
+    public void addWord(String word, int pos, int numberOfWord) {
         word += "$";
 
         for (int i = 0; i < word.length() - 1; i++) {
-            addSuffixes(root, i, word);
+            addSuffixes(root, i, word, numberOfWord);
         }
     }
 
-    private void addSuffixes(SuffixTreeNode current, int i, String word) {
+    private void addSuffixes(SuffixTreeNode current, int i, String word, int numberOfWord) {
         SuffixTreeNode foundChild = null;
         for (SuffixTreeNode child : current.children) {
             if (child.character == word.charAt(i)) {
                 //System.out.println(child.toString());
                 //foundChild = child;
                 i++;
-                addSuffixes(child, i, word);
+                addSuffixes(child, i, word, numberOfWord);
                 return;
             }
         }
 
-        //System.out.println(current.toString());
+        //System.out.println("PADRE: " + current.toString());
         for (int j = i; j < word.length() - 1; j++) {
-            current = current.addChildren(j, i, word.charAt(j));
+            current = current.addChildren(j + 1, i, word.charAt(j));
+            current.listOfWords.add(numberOfWord);
             //System.out.println("AÑADIDO " + current.toString());
         }
 

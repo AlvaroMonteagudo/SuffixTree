@@ -8,6 +8,7 @@
  *
  */
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -32,6 +33,8 @@ class SuffixTreeNode {
     public int indexStartPath = DEFAULT_SYMBOL;
 
     public char character = ' ';
+
+    public ArrayList<Integer> listOfWords = new ArrayList<>();
 
 
     /**
@@ -115,7 +118,7 @@ class CompactSuffixTreeNode {
 
     public String substring;
 
-    public int belongsTo;
+    public ArrayList<Integer> listOfWords = new ArrayList<>();
 
 
     /**
@@ -139,15 +142,15 @@ class CompactSuffixTreeNode {
      * @param isLeftDiverse flag
      * @param indexStartPath
      * @param substring
-     * @param belongsTo
+     * @param listOfWords list of words the node belongs to
      */
-    CompactSuffixTreeNode(int begin, int end, boolean isLeftDiverse, int indexStartPath, String substring, int belongsTo) {
+    CompactSuffixTreeNode(int begin, int end, boolean isLeftDiverse, int indexStartPath, String substring, ArrayList<Integer> listOfWords) {
         this.begin = begin;
         this.end = end;
         this.isLeftDiverse = isLeftDiverse;
         this.indexStartPath = indexStartPath;
         this.substring = substring;
-        this.belongsTo = belongsTo;
+        this.listOfWords = listOfWords;
     }
 
     @Override
@@ -156,7 +159,8 @@ class CompactSuffixTreeNode {
                 "begin=" + begin +
                 ", end=" + end +
                 ", isLeftDiverse=" + isLeftDiverse +
-                ", indexStartPath=" + indexStartPath;
+                ", indexStartPath=" + indexStartPath +
+                ", substring=" + substring;
     }
 }
 
