@@ -20,7 +20,6 @@ class CompactSuffixTree {
     // Node where longest repeated substring starts
     private CompactSuffixTreeNode nodeLongestSubstring = null;
 
-    private String substring;
 
     /**
      * Constructor for compacted suffix tree
@@ -76,18 +75,24 @@ class CompactSuffixTree {
 
         CompactSuffixTreeNode matchedNode = null;
 
+        int aux = pos;
+        System.out.println(current.substring);
+        System.out.println(pattern);
+
         for (CompactSuffixTreeNode child : current.children) {
-            if (pattern.charAt(pos) == string.charAt(child.indexStartPath)) { // Match character
-
-                matchedNode = child;
+            int i = 0;
+            pos = aux;
+            System.out.println(i + " " + pos);
+            while (pos < pattern.length() && pos < child.substring.length()
+                    && pattern.charAt(pos) == child.substring.charAt(i)) { // Match character
+                i++;
                 pos++;
+            }
 
-                for (int i = matchedNode.begin + 1; i <= matchedNode.end && pos < pattern.length(); ++i, ++pos) {
-                    if (pattern.charAt(pos) != string.charAt(i)) {
-                        return false;
-                    }
-                }
-                if (pos == pattern.length()) return true;
+            if (pos == pattern.length() - 1) return true;
+            else if (pos == child.substring.length() -1) {
+                matchedNode = child;
+                break;
             }
         }
         return matchedNode != null && search(matchedNode, pattern, pos);
@@ -112,8 +117,6 @@ class CompactSuffixTree {
                 }
                 break;
             }
-
-
         }
 
         // None child matched the character, insert new node
@@ -165,15 +168,21 @@ class CompactSuffixTree {
         CompactSuffixTreeNode result;
 
         int start = node.position;
+        StringBuilder sb = new StringBuilder("" + node.character);
 
         // Compact into one single node all consecutive nodes with one children
+        System.out.println(node);
+        //System.out.println();
         while (node.children.size() == 1) {
             node = node.children.get(0);
+            sb.append(node.character);
+            System.out.println(node.toString());
         }
+        System.out.println();
 
         int end = node.position;
 
-        result = new CompactSuffixTreeNode(start, end, node.isLeftDiverse, node.indexStartPath);
+        result = new CompactSuffixTreeNode(start, end, node.isLeftDiverse, node.indexStartPath, sb.toString(), 0);
 
         if (depth != 0 && node.children.size() > 0 && node.isLeftDiverse) {
             maximals.add(result);

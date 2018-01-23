@@ -53,7 +53,7 @@ class SuffixTree {
 
             //System.out.println("Añadiendo a: " + current.toString());
             // Add new characters that are not in the tree yet.
-            for (int j = i + len; j < word.length(); j++) {
+            for (int j = i + len; j < word.length() - 1; j++) {
                 current = current.addChildren(j, i, word.charAt(j));
                 //System.out.println(current.toString());
             }
@@ -62,8 +62,6 @@ class SuffixTree {
 
     public void addWord(String word, int pos) {
         word += "$";
-
-        //System.out.println("ADD WORD " + word);
 
         for (int i = 0; i < word.length() - 1; i++) {
             addSuffixes(root, i, word);
@@ -74,16 +72,20 @@ class SuffixTree {
         SuffixTreeNode foundChild = null;
         for (SuffixTreeNode child : current.children) {
             if (child.character == word.charAt(i)) {
+                //System.out.println(child.toString());
+                //foundChild = child;
                 i++;
                 addSuffixes(child, i, word);
                 return;
             }
         }
 
-        for (int j = i; j < word.length(); j++) {
+        //System.out.println(current.toString());
+        for (int j = i; j < word.length() - 1; j++) {
             current = current.addChildren(j, i, word.charAt(j));
-            //System.out.println(current.toString());
+            //System.out.println("AÑADIDO " + current.toString());
         }
+
     }
 
     public boolean search(SuffixTreeNode current, String pattern, int pos) {

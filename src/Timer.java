@@ -2,7 +2,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Timer {
 
-    long starts;
+    private long starts;
 
     public static Timer start() {
         return new Timer();
