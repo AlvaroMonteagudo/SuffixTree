@@ -76,10 +76,11 @@ class CompactSuffixTree {
         CompactSuffixTreeNode matchedNode = null;
 
         int aux = pos;
-        System.out.println(current.substring);
+
         System.out.println(pattern);
 
         for (CompactSuffixTreeNode child : current.children) {
+            System.out.println(child.substring);
             int i = 0;
             pos = aux;
             System.out.println(i + " " + pos);
