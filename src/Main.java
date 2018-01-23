@@ -27,7 +27,7 @@ public class Main {
     private static String treeWord = "";
     private static String pattern = "";
     private static ArrayList<String> words = new ArrayList<>();
-    private static AlgorithmFeatures feature = AlgorithmFeatures.N2;
+    private static AlgorithmFeatures feature = AlgorithmFeatures.NLGN;
     private static int longestLength = 0;
 
     /**
@@ -73,7 +73,7 @@ public class Main {
 
         if (time) printComparingTable();
 
-        out.print("Creating tree.");
+        out.println("Creating tree.");
 
         CompactSuffixTree compactTree = (words.isEmpty()) ?
                     new CompactSuffixTree(treeWord, feature) :
@@ -208,7 +208,7 @@ public class Main {
                 for (int index : listOfWords) {
                     ++i;
                     sb.append(String.format("%" + longestLength + "s", words.get(index))).append("\t");
-                    if (i % 5 == 0) sb.append('\n');
+                    if (i % 7 == 0) sb.append('\n');
                 }
                 out.println(sb.toString());
             }
@@ -220,7 +220,7 @@ public class Main {
 
     /**
      * Prints all maximals found in the tree
-     * @param maximals
+     * @param maximals list where maximals are stored
      */
     private static void printMaximals(ArrayList<String> maximals) {
         if (!maximals.isEmpty()) {
