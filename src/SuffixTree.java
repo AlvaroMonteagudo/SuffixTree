@@ -1,8 +1,8 @@
 /**
  *  Implementation for basic and compacted suffix trees.
  *
- *  @authors Silvia Usón: 681721 at unizar dot es
- *           Álvaro Monteagudo: 681060 at unizar dot es
+ *  @authors Silvia UsÃ³n: 681721 at unizar dot es
+ *           Ã�lvaro Monteagudo: 681060 at unizar dot es
  *
  *  @version 1.0
  *
@@ -21,11 +21,9 @@ class SuffixTree {
      * @param word from which the tree is built.
      */
     SuffixTree(String word) {
-        //System.out.println(word);
         root = new SuffixTreeNode(-1);
 
         for (int i = 1; i < word.length() - 1; ++i) {
-            //System.out.println();
             SuffixTreeNode current = root;
             int len = 0;
 
@@ -51,7 +49,6 @@ class SuffixTree {
                 current.updateLeftDiverse(i, word);
             }
 
-            //System.out.println("Añadiendo a: " + current.toString());
             // Add new characters that are not in the tree yet.
             for (int j = i + len; j < word.length() - 1; j++) {
                 current = current.addChildren(j, i, word.charAt(j));

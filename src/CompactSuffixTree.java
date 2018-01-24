@@ -73,12 +73,8 @@ class CompactSuffixTree {
                     print(root);
                     System.out.println();
                 }
-
-                //System.out.println("ashdhj");
-                //print(root);
                 currentWord++;
             }
-            //print(root);
         }
     }
 
@@ -93,7 +89,6 @@ class CompactSuffixTree {
             pos = aux;
             while (pos < pattern.length() && i < child.substring.length()
                     && pattern.charAt(pos) == child.substring.charAt(i)) { // Match character
-                //System.out.println(pattern.charAt(pos) + " " + child.substring.charAt(i));
                 i++;
                 pos++;
             }
@@ -109,9 +104,6 @@ class CompactSuffixTree {
 
     private void insertSuffix(CompactSuffixTreeNode current, int pos, int indexInWord) {
         CompactSuffixTreeNode matchedNode = null;
-        //System.out.println("in");
-
-        //System.out.println(pos);
         int inTree = 0;
         int idx = -1;
 
@@ -130,39 +122,37 @@ class CompactSuffixTree {
             }
 
             if ((pos + inTree) == string.length() - 1) {
-                //System.out.println("Esta " + string.substring(pos, string.length() - 1));
+            	matchedNode.listOfWords.add(currentWord);	//Como ya esta en el arbol hay que añadir que pertenece tambien a ella
                 return; // Already in tree
-            } else if (matchedNode != null) {
+            } else if (matchedNode != null) {	
                 break;
             }
         }
 
 
         if (matchedNode == null) {
-            //System.out.println("NUevo nodo full " + string.substring(pos, string.length() - 1));
             CompactSuffixTreeNode newNode = new CompactSuffixTreeNode(pos, string.length(), false,
                     indexInWord, string.substring(pos, string.length() - 1), new HashSet<Integer>(){{add(currentWord);}});
             current.children.add(newNode);
         } else if (inTree < matchedNode.substring.length()) {
-            //System.out.println("else");
-            //System.out.println(matchedNode.substring);
-            //System.out.println(inTree);
             int end = pos + inTree;
+            Set<Integer> newlist = new HashSet<>();
+            newlist.addAll(matchedNode.listOfWords); 
             CompactSuffixTreeNode newNode = new CompactSuffixTreeNode(pos, end - 1, false,
-                    indexInWord, matchedNode.substring.substring(0, inTree), matchedNode.listOfWords);
-            newNode.listOfWords.add(currentWord);
+                  indexInWord, matchedNode.substring.substring(0, inTree), newlist); 		//Cambio por problemas de recursividad
 
             matchedNode.begin += inTree;
             matchedNode.substring = matchedNode.substring.substring(inTree);
+            newNode.listOfWords.add(currentWord);
             current.children.set(idx, newNode);
-            //System.out.println(matchedNode);
-            //System.out.println(newNode);
+
 
             newNode.children.add(matchedNode);
 
             insertSuffix(newNode, end, indexInWord);
 
         } else {
+        	matchedNode.listOfWords.add(currentWord);		//hasta el trozo de antes de separar el nodo, tambien pertenece la palabra
             insertSuffix(matchedNode, pos + inTree, indexInWord);
         }
     }
@@ -248,14 +238,10 @@ class CompactSuffixTree {
         StringBuilder sb = new StringBuilder("" + node.character);
 
         // Compact into one single node all consecutive nodes with one children
-        //System.out.println(node);
-        //System.out.println();
         while (node.children.size() == 1) {
             node = node.children.get(0);
             sb.append(node.character);
-            //System.out.println(node.toString());
         }
-        //System.out.println();
 
         int end = node.position;
 
@@ -314,6 +300,5 @@ class CompactSuffixTree {
             System.out.println(child);
             print(child);
         }
-        //System.out.println();
     }
 }

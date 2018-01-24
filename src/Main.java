@@ -61,7 +61,6 @@ public class Main {
     public static void main(String[] args) {
 
         parseArguments(args);
-
         Scanner keyboard = new Scanner(in);
 
         if (treeWord.equals("") && words.isEmpty()) {
