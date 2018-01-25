@@ -19,7 +19,7 @@ import java.util.Set;
 class SuffixTreeNode {
 
     // Default value for node
-    public final char DEFAULT_SYMBOL = 0;
+    private final char DEFAULT_SYMBOL = 0;
 
     // Position of the node
     public int position;
@@ -78,7 +78,7 @@ class SuffixTreeNode {
     /**
      * Update the node setting left diversity if proceeds
      * @param firstChar char to compare if it is left diverse
-     * @param word
+     * @param word string
      */
     void updateLeftDiverse(int firstChar, String word) {
         char leftChar = (this.indexStartPath < 1) ? ' ' : word.charAt(this.indexStartPath - 1);

@@ -3,11 +3,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Implementation of a basic compacted suffix tree
+ *  Implementation for compacted suffix tree.
+ *
+ *  @authors Silvia UsÃ³n: 681721 at unizar dot es
+ *           Álvaro Monteagudo: 681060 at unizar dot es
+ *
+ *  @version 1.0
+ *
  */
 class CompactSuffixTree {
 
-    // Word that represents the treee
+    // String to save current word to be added to the tree
     private String string;
 
     // Root node of the tree
@@ -24,7 +30,6 @@ class CompactSuffixTree {
 
     private int currentWord;
 
-
     /**
      * Constructor for compacted suffix tree
      * @param word from which tree is built
@@ -32,6 +37,7 @@ class CompactSuffixTree {
     CompactSuffixTree(String word, Main.AlgorithmFeatures feature) {
         string = "$" + word + "$";
         maximals = new ArrayList<>();
+        currentWord = 0;
 
         // N CUADRADO
         if (feature == Main.AlgorithmFeatures.N2) {
@@ -41,7 +47,7 @@ class CompactSuffixTree {
             // N LOG N
             root = new CompactSuffixTreeNode(-1, -1, false, 0);
             for (int i = 1; i < string.length() - 1; i++) {
-                insertNewNode(root, i, i);
+                insertSuffix(root, i, i);
             }
         }
     }
@@ -51,15 +57,15 @@ class CompactSuffixTree {
      * @param words from which tree is built
      */
     CompactSuffixTree(String [] words, Main.AlgorithmFeatures feature) {
-        string = "$" + words[0] + "$";
         maximals = new ArrayList<>();
         currentWord = 0;
 
         // N CUADRADO
         if (feature == Main.AlgorithmFeatures.N2) {
+            string = "$" + words[0] + "$";
             SuffixTree tree = new SuffixTree(string);
             for (int i = 1; i < words.length; i++) {
-                tree.addWord(words[i],0, i);
+                tree.addWord(words[i], i);
             }
             root = generateCompactSuffixTree(tree.getRoot(), 0);
         } else {
@@ -67,17 +73,21 @@ class CompactSuffixTree {
             root = new CompactSuffixTreeNode(-1, -1, false, 0);
             for (String word : words) {
                 string = "$" + word + "$";
-                System.out.println(word);
                 for (int i = 1; i < string.length() - 1; i++) {
                     insertSuffix(root, i, i);
-                    print(root);
-                    System.out.println();
                 }
                 currentWord++;
             }
         }
     }
 
+    /**
+     * Method to look for a certain pattern within the tree
+     * @param current node to look in
+     * @param pattern to be looked for
+     * @param pos current position in the pattern string
+     * @return a set of integers representing in which words the pattern was found, empty set if not found.
+     */
     public Set<Integer> search(CompactSuffixTreeNode current, String pattern, int pos) {
 
         CompactSuffixTreeNode matchedNode = null;
@@ -93,7 +103,8 @@ class CompactSuffixTree {
                 pos++;
             }
 
-            if (pos == pattern.length()) return child.listOfWords;
+            if (pos == pattern.length())
+                return child.listOfWords;
             else if (i == child.substring.length()) {
                 matchedNode = child;
                 break;
@@ -102,12 +113,19 @@ class CompactSuffixTree {
         return (matchedNode != null) ? search(matchedNode, pattern, pos) : new HashSet<>();
     }
 
+    /**
+     * Insert a new suffix to the tree
+     * @param current node to check case of insertion
+     * @param pos in the current word to be added to the tree
+     * @param indexInWord extra parameter for internal management
+     */
     private void insertSuffix(CompactSuffixTreeNode current, int pos, int indexInWord) {
         CompactSuffixTreeNode matchedNode = null;
         int inTree = 0;
         int idx = -1;
 
         ArrayList<CompactSuffixTreeNode> children = current.children;
+        // Check how many charcters are already in the tree
         for (int i = 0; i < children.size(); i++) {
             CompactSuffixTreeNode child = children.get(i);
 
@@ -121,107 +139,65 @@ class CompactSuffixTree {
                 }
             }
 
+            // We found a node that fits the full suffix
             if ((pos + inTree) == string.length() - 1) {
-            	matchedNode.listOfWords.add(currentWord);	//Como ya esta en el arbol hay que a�adir que pertenece tambien a ella
+                assert matchedNode != null;
+                matchedNode.listOfWords.add(currentWord);
                 return; // Already in tree
-            } else if (matchedNode != null) {	
+            } else if (matchedNode != null) {	// If we already found a child that matchs in any of the possible way, break the loop
                 break;
             }
         }
 
-
+        // If child was not found, add new full branch with suffix
         if (matchedNode == null) {
-            CompactSuffixTreeNode newNode = new CompactSuffixTreeNode(pos, string.length(), false,
+            CompactSuffixTreeNode newNode = new CompactSuffixTreeNode(pos, string.length() - 1, false,
                     indexInWord, string.substring(pos, string.length() - 1), new HashSet<Integer>(){{add(currentWord);}});
             current.children.add(newNode);
-        } else if (inTree < matchedNode.substring.length()) {
+        } else if (inTree < matchedNode.substring.length()) { // Child found but does not match the full branch
+            // We have to split this branch to include the new one
             int end = pos + inTree;
-            Set<Integer> newlist = new HashSet<>();
-            newlist.addAll(matchedNode.listOfWords); 
-            CompactSuffixTreeNode newNode = new CompactSuffixTreeNode(pos, end - 1, false,
-                  indexInWord, matchedNode.substring.substring(0, inTree), newlist); 		//Cambio por problemas de recursividad
+            char leftChar = (current.indexStartPath < 1) ? ' ' : string.charAt(current.indexStartPath - 1);
+            char rightChar = (indexInWord < 1) ? ' ' : string.charAt(indexInWord - 1);
+            boolean flag = current.isLeftDiverse || leftChar != rightChar;
 
-            matchedNode.begin += inTree;
-            matchedNode.substring = matchedNode.substring.substring(inTree);
-            newNode.listOfWords.add(currentWord);
-            current.children.set(idx, newNode);
+            // New node with all characters that matched
+            CompactSuffixTreeNode newNode = new CompactSuffixTreeNode(pos, end - 1, flag,
+                  indexInWord, matchedNode.substring.substring(0, inTree), new HashSet<>(matchedNode.listOfWords)); 		//Cambio por problemas de recursividad
 
-
-            newNode.children.add(matchedNode);
-
-            insertSuffix(newNode, end, indexInWord);
-
-        } else {
-        	matchedNode.listOfWords.add(currentWord);		//hasta el trozo de antes de separar el nodo, tambien pertenece la palabra
-            insertSuffix(matchedNode, pos + inTree, indexInWord);
-        }
-    }
-
-    private void insertNewNode(CompactSuffixTreeNode root, int from, int startIndexInWord) {
-        CompactSuffixTreeNode node = root;
-
-        int charactersInTree = 0; // Characters already in the tree
-        int idx = -1;
-
-        for (int i = 0; i < root.children.size(); i++) {
-            CompactSuffixTreeNode child = root.children.get(i);
-
-            if (string.charAt(from) == string.charAt(child.begin)) {
-                node = child;
-                idx = i;
-                while (((child.begin + charactersInTree) <= child.end) &&
-                       ((child.begin + charactersInTree) < string.length()) &&
-                        (string.charAt(child.begin + charactersInTree) ==
-                                string.charAt(from + charactersInTree))) {
-                    charactersInTree++;
-                }
-                break;
-            }
-        }
-
-        // None child matched the character, insert new node
-        if (idx == -1) {
-            CompactSuffixTreeNode newNode = new CompactSuffixTreeNode(from, string.length() - 1,
-                    false, startIndexInWord, string.substring(1, string.length() -1),
-                    new HashSet<Integer>() {{add(currentWord);}});
-            root.children.add(newNode);
-        } else if (node.begin + charactersInTree <= node.end) {
-            int end = from + charactersInTree - 1;
-            char leftChar = (node.indexStartPath < 1) ? ' ' : string.charAt(node.indexStartPath - 1);
-            char rightChar = (startIndexInWord < 1) ? ' ' : string.charAt(startIndexInWord - 1);
-            boolean flag = node.isLeftDiverse || leftChar != rightChar;
-
-            CompactSuffixTreeNode newNode = new CompactSuffixTreeNode(from, end, flag, startIndexInWord,
-                    string.substring(from, end), node.listOfWords);
-            newNode.listOfWords.add(currentWord);
 
             if (newNode.isLeftDiverse) {
                 maximals.add(newNode);
             }
 
-            int newDepth = from + charactersInTree - startIndexInWord;
+            int newDepth = end - indexInWord;
 
             if (newDepth > indexLongestSubstring) {
                 indexLongestSubstring = newDepth;
                 nodeLongestSubstring = newNode;
             }
 
-            node.begin += charactersInTree;
-            root.children.set(idx, newNode);
-            System.out.println(node.substring);
-            node.substring = node.substring.substring(end + 1);
-            newNode.children.add(node);
+            // Matched node update
+            matchedNode.begin += inTree;
+            // Now contains the substring from the first character that did not match
+            matchedNode.substring = matchedNode.substring.substring(inTree);
+            newNode.listOfWords.add(currentWord);
 
-            insertNewNode(newNode, from + charactersInTree, startIndexInWord);
+            // Set node to the new one and add updated matched node as child to this new one
+            current.children.set(idx, newNode);
+            newNode.children.add(matchedNode);
 
-        } else {
-            char leftChar = (node.indexStartPath < 1) ? ' ' : string.charAt(node.indexStartPath - 1);
-            char rightChar = (startIndexInWord < 1) ? ' ' : string.charAt(startIndexInWord - 1);
-            if (!node.isLeftDiverse && leftChar != rightChar) {
-                node.isLeftDiverse = true;
-                maximals.add(node);
+            insertSuffix(newNode, end, indexInWord);
+
+        } else { // Matched a full branch, insert what is left of the suffix, starting from the matched node
+            char leftChar = (current.indexStartPath < 1) ? ' ' : string.charAt(current.indexStartPath - 1);
+            char rightChar = (indexInWord < 1) ? ' ' : string.charAt(indexInWord - 1);
+            if (!current.isLeftDiverse && leftChar != rightChar) {
+                current.isLeftDiverse = true;
+                maximals.add(current);
             }
-            insertNewNode(node, from + charactersInTree, startIndexInWord);
+        	matchedNode.listOfWords.add(currentWord);		//hasta el trozo de antes de separar el nodo, tambien pertenece la palabra
+            insertSuffix(matchedNode, pos + inTree, indexInWord);
         }
     }
 
@@ -272,7 +248,7 @@ class CompactSuffixTree {
      */
     String getLongestSubstring() {
         if (nodeLongestSubstring != null) {
-            int start = nodeLongestSubstring.begin;
+            int start = nodeLongestSubstring.indexStartPath;
             int end =  nodeLongestSubstring.end;
             int len = end - start + 1;
             return string.substring(start, start + len);
@@ -287,7 +263,7 @@ class CompactSuffixTree {
     ArrayList<String> getMaximals() {
         ArrayList<String> result = new ArrayList<>();
         for (CompactSuffixTreeNode node: maximals) {
-            int start = node.begin;
+            int start = node.indexStartPath;
             int end =  node.end;
             int len = end - start + 1;
             result.add(string.substring(start, start + len));

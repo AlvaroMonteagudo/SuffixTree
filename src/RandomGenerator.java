@@ -1,3 +1,5 @@
+import java.util.Random;
+
 /**
  *  Implementation of a string random generator.
  *
@@ -7,9 +9,6 @@
  *  @version 1.0
  *
  */
-
-import java.util.Random;
-
 public class RandomGenerator {
 
     private static Random rnd;
@@ -24,11 +23,6 @@ public class RandomGenerator {
      */
     RandomGenerator() {
         rnd = new Random();
-    }
-
-    // Get random generator
-    public Random getRnd() {
-        return rnd;
     }
 
     /**

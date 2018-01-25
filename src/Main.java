@@ -1,31 +1,35 @@
-/**
- *  Implementation for basic and compacted tree nodes.
- *
- *  @authors Silvia Usón: 681721 at unizar dot es
- *           Álvaro Monteagudo: 681060 at unizar dot es
- *
- *  @version 1.0
- *
- */
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.System.*;
 
+/**
+  * Implementation for basic and compacted tree nodes.
+  *
+  *  @authors Silvia Usón: 681721 at unizar dot es
+  *           Álvaro Monteagudo: 681060 at unizar dot es
+  *
+  *  @version 1.0
+
+ */
 public class Main {
 
+    /**
+     * Strategies for tree construction
+     */
     public enum AlgorithmFeatures {
         N2, NLGN
     }
 
-    private static boolean getLongest = false, getMaximals = false, time = false;
+    private static boolean getLongest = false;
+    private static boolean getMaximals = false;
+    private static boolean time = false;
     private static String treeWord = "";
-    private static String pattern = "";
     private static ArrayList<String> words = new ArrayList<>();
     private static AlgorithmFeatures feature = AlgorithmFeatures.NLGN;
     private static int longestLength = 0;
@@ -67,6 +71,8 @@ public class Main {
             out.print("Enter word: ");
             treeWord = keyboard.next();
             treeWord = removeSpecialChars(treeWord);
+            words.add(treeWord);
+            longestLength = treeWord.length();
             out.println();
         }
 
@@ -74,16 +80,18 @@ public class Main {
 
         out.println("Creating tree.");
 
-        CompactSuffixTree compactTree = (words.isEmpty()) ?
-                    new CompactSuffixTree(treeWord, feature) :
+        CompactSuffixTree compactTree = //(words.isEmpty()) ?
+                    //new CompactSuffixTree(treeWord, feature) :
                     new CompactSuffixTree(words.toArray(new String [0]), feature);
 
         searchPatterns(keyboard, compactTree);
 
-        out.println();
-
-        if (getLongest) out.println("Longest repeated substring: " + compactTree.getLongestSubstring() + "\n");
-        if (getMaximals)  printMaximals(compactTree.getMaximals());
+        if (words.size() > 1 && (getLongest && getMaximals)) {
+            System.out.println("Longest substring and maximals only available with one word tree.");
+        } else {
+            if (getLongest) out.println("Longest repeated substring: " + compactTree.getLongestSubstring() + "\n");
+            if (getMaximals) printMaximals(compactTree.getMaximals());
+        }
     }
 
     /**
@@ -161,8 +169,7 @@ public class Main {
             try {
                 s = new Scanner(f);
 
-                boolean condition;
-                while (condition = (n < 0) ? s.hasNext() : n > 0) {
+                while ((n < 0) ? s.hasNext() : n > 0) {
                     String word = removeSpecialChars(s.next());
                     if (word.length() > longestLength) longestLength = word.length();
                     if (!word.trim().equals("")) {
@@ -195,7 +202,7 @@ public class Main {
      */
     private static void searchPatterns(Scanner keyboard, CompactSuffixTree tree) {
         out.print("Enter pattern (0 to exit): ");
-        pattern = keyboard.next();
+        String pattern = keyboard.next();
         pattern = removeSpecialChars(pattern);
 
         while(!pattern.equals("0")){
@@ -235,10 +242,13 @@ public class Main {
         } else out.println("No maximals\n");
     }
 
+    /**
+     * Print a comparing table between different algorithm startegies on tree construction.
+     */
     private static void printComparingTable() {
         Timer timer = Timer.start();
 
-        CompactSuffixTree tree = new CompactSuffixTree(treeWord, AlgorithmFeatures.N2);
+        AtomicReference<CompactSuffixTree> tree = new AtomicReference<>(new CompactSuffixTree(words.toArray(new String [0]), AlgorithmFeatures.N2));
 
         long elapsed_ns = timer.time();
         long elapsed_ms = timer.convertTo(TimeUnit.MILLISECONDS, elapsed_ns);
@@ -253,7 +263,7 @@ public class Main {
 
         timer.reset();
 
-        tree = new CompactSuffixTree(treeWord, AlgorithmFeatures.NLGN);
+        tree.set(new CompactSuffixTree(words.toArray(new String [0]), AlgorithmFeatures.NLGN));
 
         elapsed_ns = timer.time();
         elapsed_ms = timer.convertTo(TimeUnit.MILLISECONDS, elapsed_ns);

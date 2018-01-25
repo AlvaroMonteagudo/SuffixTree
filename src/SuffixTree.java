@@ -1,20 +1,16 @@
 /**
- *  Implementation for basic and compacted suffix trees.
+ *  Implementation for basic suffix trees.
  *
  *  @authors Silvia UsÃ³n: 681721 at unizar dot es
- *           Ã�lvaro Monteagudo: 681060 at unizar dot es
+ *           Álvaro Monteagudo: 681060 at unizar dot es
  *
  *  @version 1.0
  *
  */
-
-/**
- * Implementation of a basic suffix tree
- */
 class SuffixTree {
 
     // Root of the tree
-    public SuffixTreeNode root;
+    private SuffixTreeNode root;
 
     /**
      * Suffix tree constructor
@@ -57,7 +53,20 @@ class SuffixTree {
         }
     }
 
-    public void addWord(String word, int pos, int numberOfWord) {
+    /**
+     * Get root of the tree
+     * @return root of this tree
+     */
+    public SuffixTreeNode getRoot() {
+        return root;
+    }
+
+    /**
+     * Add a new word to the suffix tree
+     * @param word to be added
+     * @param numberOfWord to add
+     */
+    public void addWord(String word, int numberOfWord) {
         word += "$";
 
         for (int i = 0; i < word.length() - 1; i++) {
@@ -65,8 +74,14 @@ class SuffixTree {
         }
     }
 
+    /**
+     * Add all suffixes for a given word
+     * @param current current node we are in the tree
+     * @param i index in word
+     * @param word which suffixes has te be added
+     * @param numberOfWord to add
+     */
     private void addSuffixes(SuffixTreeNode current, int i, String word, int numberOfWord) {
-        SuffixTreeNode foundChild = null;
         for (SuffixTreeNode child : current.children) {
             if (child.character == word.charAt(i)) {
                 child.listOfWords.add(numberOfWord);
@@ -81,10 +96,6 @@ class SuffixTree {
             current.listOfWords.add(numberOfWord);
         }
 
-    }
-    // Root of the tree
-    public SuffixTreeNode getRoot() {
-        return root;
     }
 }
 
