@@ -1,3 +1,7 @@
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  *  Implementation for basic and compacted tree nodes.
  *
@@ -6,15 +10,6 @@
  *
  *  @version 1.0
  *
- */
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
-/**
- * Class that represents a basic default suffix tree node.
- * It keeps position, children and left diverse flag.
  */
 class SuffixTreeNode {
 
@@ -111,10 +106,10 @@ class CompactSuffixTreeNode {
     public ArrayList<CompactSuffixTreeNode> children = new ArrayList<>();
 
     // Flag if node is left diverse
-    public boolean isLeftDiverse = false;
+    public boolean isLeftDiverse;
 
     // Helpful parameter to determine if a node is left diverse
-    public int indexStartPath = 0;
+    public int indexStartPath;
 
     public String substring;
 
@@ -126,7 +121,7 @@ class CompactSuffixTreeNode {
      * @param begin value of the node
      * @param end value of the node
      * @param isLeftDiverse flag
-     * @param indexStartPath
+     * @param indexStartPath extra parameter for internal management
      */
     CompactSuffixTreeNode(int begin, int end, boolean isLeftDiverse, int indexStartPath) {
         this.begin = begin;
@@ -140,8 +135,8 @@ class CompactSuffixTreeNode {
      * @param begin value of the node
      * @param end value of the node
      * @param isLeftDiverse flag
-     * @param indexStartPath
-     * @param substring
+     * @param indexStartPath extra parameter for internal management
+     * @param substring fragment of the word to keep in the node
      * @param listOfWords list of words the node belongs to
      */
     CompactSuffixTreeNode(int begin, int end, boolean isLeftDiverse, int indexStartPath, String substring, Set<Integer> listOfWords) {

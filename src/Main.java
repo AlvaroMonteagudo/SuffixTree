@@ -39,11 +39,12 @@ public class Main {
      */
     private static void printUsage() {
         out.println("./Main [-h] [-time] [-cost] [-longest] [-maximals] [-random] [-file] ");
-        out.println("This program builds the corresponding suffix tree for a word or a bunch of words from" +
-                "which you can check a time comparision between different algorithm strategies: n2 or nlgn," +
-                "if a certain pattern exists, you can also get the longest repeated substring and all the maximals of the tree.\n" +
-                "Word can be supplied from a file, generated randomly with n characters or from the input " +
-                "of this program.\nFile has priority over random string and random over user input.\n" +
+        out.println("This program builds the corresponding compacted suffix tree for a word or a bunch of words.\n" +
+                "Tree are created from the words found on a specified file, or with a random word, if file or random " +
+                "not supplied a prompt will ask for a word to create the tree.\n" +
+                "There two available implementations: n squared cost and logarithmic. \n" +
+                "Once created, tree is ready to look for as many patterns as user wants to.\n" +
+                "For a single word tree there are available two features: longest repeated substring and list of maximals\n" +
                 "Visualization of Ukkonen's algorithm step by step, visit the next webpage: " +
                 "http://brenden.github.io/ukkonen-animation/\n" +
                 "All credits to: Brenden Kokoszka. Git user: https://github.com/brenden");
@@ -78,7 +79,9 @@ public class Main {
 
         if (time) printComparingTable();
 
-        out.println("Creating tree.");
+
+        if (words.size() == 1) out.println("Creating tree with " + words.get(0));
+        else out.println("Creating tree.");
 
         CompactSuffixTree compactTree = //(words.isEmpty()) ?
                     //new CompactSuffixTree(treeWord, feature) :
@@ -129,6 +132,7 @@ public class Main {
                     try {
                         int randomChars = Integer.parseInt(args[i]);
                         treeWord = (treeWord.equals("")) ? new RandomGenerator().stringRandom(randomChars) : treeWord;
+                        words.add(treeWord);
                     } catch (NumberFormatException | NullPointerException e) {
                         err.println(e.getMessage());
                     }

@@ -5,7 +5,7 @@ import java.util.Set;
 /**
  *  Implementation for compacted suffix tree.
  *
- *  @authors Silvia UsÃ³n: 681721 at unizar dot es
+ *  @authors Silvia Usón: 681721 at unizar dot es
  *           Álvaro Monteagudo: 681060 at unizar dot es
  *
  *  @version 1.0
@@ -271,10 +271,10 @@ class CompactSuffixTree {
         return result;
     }
 
-    void print(CompactSuffixTreeNode current) {
+    /*void print(CompactSuffixTreeNode current) {
         for (CompactSuffixTreeNode child : current.children) {
             System.out.println(child);
             print(child);
         }
-    }
+    }*/
 }
