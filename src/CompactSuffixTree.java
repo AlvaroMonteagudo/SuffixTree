@@ -157,25 +157,31 @@ class CompactSuffixTree {
         } else if (inTree < matchedNode.substring.length()) { // Child found but does not match the full branch
             // We have to split this branch to include the new one
             int end = pos + inTree;
-            char leftChar = (current.indexStartPath < 1) ? ' ' : string.charAt(current.indexStartPath - 1);
-            char rightChar = (indexInWord < 1) ? ' ' : string.charAt(indexInWord - 1);
-            boolean flag = current.isLeftDiverse || leftChar != rightChar;
+            boolean flag = false;
+            if (currentWord == 0) {
+                char leftChar = (current.indexStartPath < 1) ? ' ' : string.charAt(current.indexStartPath - 1);
+                char rightChar = (indexInWord < 1) ? ' ' : string.charAt(indexInWord - 1);
+                flag = current.isLeftDiverse || leftChar != rightChar;
+            }
+
 
             // New node with all characters that matched
             CompactSuffixTreeNode newNode = new CompactSuffixTreeNode(pos, end - 1, flag,
                   indexInWord, matchedNode.substring.substring(0, inTree), new HashSet<>(matchedNode.listOfWords)); 		//Cambio por problemas de recursividad
 
+            if (currentWord == 0) {
+                if (newNode.isLeftDiverse) {
+                    maximals.add(newNode);
+                }
 
-            if (newNode.isLeftDiverse) {
-                maximals.add(newNode);
+                int newDepth = end - indexInWord;
+
+                if (newDepth > indexLongestSubstring) {
+                    indexLongestSubstring = newDepth;
+                    nodeLongestSubstring = newNode;
+                }
             }
 
-            int newDepth = end - indexInWord;
-
-            if (newDepth > indexLongestSubstring) {
-                indexLongestSubstring = newDepth;
-                nodeLongestSubstring = newNode;
-            }
 
             // Matched node update
             matchedNode.begin += inTree;
@@ -190,11 +196,13 @@ class CompactSuffixTree {
             insertSuffix(newNode, end, indexInWord);
 
         } else { // Matched a full branch, insert what is left of the suffix, starting from the matched node
-            char leftChar = (current.indexStartPath < 1) ? ' ' : string.charAt(current.indexStartPath - 1);
-            char rightChar = (indexInWord < 1) ? ' ' : string.charAt(indexInWord - 1);
-            if (!current.isLeftDiverse && leftChar != rightChar) {
-                current.isLeftDiverse = true;
-                maximals.add(current);
+            if (currentWord == 0) {
+                char leftChar = (current.indexStartPath < 1) ? ' ' : string.charAt(current.indexStartPath - 1);
+                char rightChar = (indexInWord < 1) ? ' ' : string.charAt(indexInWord - 1);
+                if (!current.isLeftDiverse && leftChar != rightChar) {
+                    current.isLeftDiverse = true;
+                    maximals.add(current);
+                }
             }
         	matchedNode.listOfWords.add(currentWord);		//hasta el trozo de antes de separar el nodo, tambien pertenece la palabra
             insertSuffix(matchedNode, pos + inTree, indexInWord);

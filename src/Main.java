@@ -19,6 +19,7 @@ import static java.lang.System.*;
  */
 public class Main {
 
+
     /**
      * Strategies for tree construction
      */
@@ -29,6 +30,7 @@ public class Main {
     private static boolean getLongest = false;
     private static boolean getMaximals = false;
     private static boolean time = false;
+    private static boolean caseSensitive = false;
     private static String treeWord = "";
     private static ArrayList<String> words = new ArrayList<>();
     private static AlgorithmFeatures feature = AlgorithmFeatures.NLGN;
@@ -118,6 +120,9 @@ public class Main {
                             break;
                     }
                     break;
+                case "-case_sensitive" :
+                    caseSensitive = true;
+                    break;
                 case "-time" :
                     time = true;
                     break;
@@ -196,7 +201,8 @@ public class Main {
      * @return word without special characters
      */
     private static String removeSpecialChars(String s) {
-        return s.replaceAll("[^a-zA-Z0-9]+","");
+        return (caseSensitive) ? s.replaceAll("[^a-zA-Z0-9]+","").toLowerCase() :
+                                 s.replaceAll("[^a-zA-Z0-9]+","");
     }
 
     /**
@@ -218,7 +224,7 @@ public class Main {
                 for (int index : listOfWords) {
                     ++i;
                     sb.append(String.format("%" + longestLength + "s", words.get(index))).append("\t");
-                    if (i % 7 == 0) sb.append('\n');
+                    if (i % 5 == 0) sb.append('\n');
                 }
                 out.println(sb.toString());
             }
