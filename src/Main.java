@@ -79,8 +79,8 @@ public class Main {
         Scanner keyboard = new Scanner(in);
 
         if (treeWord.equals("") && words.isEmpty()) {
-            out.print("Enter word: ");
-            treeWord = keyboard.next();
+            out.print("Enter text: ");
+            treeWord = keyboard.nextLine();
             treeWord = removeSpecialChars(treeWord);
             words.add(treeWord);
             out.println();
@@ -273,13 +273,12 @@ public class Main {
 
         AtomicReference<CompactSuffixTree> tree = new AtomicReference<>();
 
-
         String aux = "+-----------+-------+--------+-------------+";
 
-        StringBuilder table = new StringBuilder(aux);
-        table.append(String.format("%1s%10s%2s%5s%3s%6s%3s%8s%6s\n","|","ALGORITHM", "|", "ms",
-                "|", "us", "|", "ns", "|"));
-        table.append(aux);
+        StringBuilder table = new StringBuilder(aux).append('\n');
+        table.append(String.format("%1s%10s%2s%5s%3s%6s%3s%8s%6s","|","ALGORITHM", "|", "ms",
+                "|", "us", "|", "ns", "|")).append('\n');
+        table.append(aux).append('\n');
 
         try {
             tree.set(new CompactSuffixTree(words.toArray(new String [0]), AlgorithmFeatures.N2));
@@ -287,8 +286,8 @@ public class Main {
             long elapsed_ms = timer.convertTo(TimeUnit.MILLISECONDS, elapsed_ns);
             long elapsed_us = timer.convertTo(TimeUnit.MICROSECONDS, elapsed_ns);
 
-            table.append(String.format("%1s%10s%2s%5d%3s%7d%2s%10d%4s\n", "|", "N2", "|", elapsed_ms,
-                    "|", elapsed_us, "|", elapsed_ns, "|"));
+            table.append(String.format("%1s%10s%2s%5d%3s%7d%2s%10d%4s", "|", "N2", "|", elapsed_ms,
+                    "|", elapsed_us, "|", elapsed_ns, "|")).append('\n');
         } catch (OutOfMemoryError ex) {
             System.out.println("Exceeded limit in garbage collector N2, try shorter texts.");
         }
@@ -301,8 +300,8 @@ public class Main {
             long elapsed_ms = timer.convertTo(TimeUnit.MILLISECONDS, elapsed_ns);
             long elapsed_us = timer.convertTo(TimeUnit.MICROSECONDS, elapsed_ns);
 
-            table.append(String.format("%1s%10s%2s%5d%3s%7d%2s%10d%4s\n", "|", "NLGN", "|",
-                    elapsed_ms, "|", elapsed_us, "|", elapsed_ns, "|"));
+            table.append(String.format("%1s%10s%2s%5d%3s%7d%2s%10d%4s", "|", "NLGN", "|",
+                    elapsed_ms, "|", elapsed_us, "|", elapsed_ns, "|")).append('\n');
             table.append(aux).append('\n');
         } catch (OutOfMemoryError ex) {
             System.out.println("Exceeded limit in garbage collector NLGN, try shorter texts.");
