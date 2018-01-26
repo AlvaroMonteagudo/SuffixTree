@@ -33,8 +33,8 @@ public class Main {
     private static boolean caseSensitive = false;
     private static String treeWord = "";
     private static ArrayList<String> words = new ArrayList<>();
+    private static ArrayList<String> files = new ArrayList<>();
     private static AlgorithmFeatures feature = AlgorithmFeatures.NLGN;
-    private static int longestLength = 0;
 
     /**
      * Prints instructions of use
@@ -42,9 +42,9 @@ public class Main {
     private static void printUsage() {
         out.println("./Main [-h] [-time] [-cost] [-longest] [-maximals] [-random] [-file] ");
         out.println("This program builds the corresponding compacted suffix tree for a word or a bunch of words.\n" +
-                "Tree are created from the words found on a specified file, or with a random word, if file or random " +
+                "Tree are created from multiple files, words found on a specified file, or with a random word, if file or random " +
                 "not supplied a prompt will ask for a word to create the tree.\n" +
-                "There two available implementations: n squared cost and logarithmic. \n" +
+                "There are two available implementations: n squared cost and logarithmic. \n" +
                 "Once created, tree is ready to look for as many patterns as user wants to.\n" +
                 "For a single word tree there are available two features: longest repeated substring and list of maximals\n" +
                 "Visualization of Ukkonen's algorithm step by step, visit the next webpage: " +
@@ -54,9 +54,10 @@ public class Main {
         out.println("\t-time: prints a comparision table of tree's construction time, n squared vs n log n.");
         out.println("\t-cost <STRING>: n2 or nlgn tree construction, nlgn by default.");
         out.println("\t-longest: get the longest repeated substring.");
+        out.println("\t-case_sensitive: to make difference between upper and lower case letters. To be effective it has to be passed before -file argument.");
         out.println("\t-maximals: get all maximal repetitions in the string.");
         out.println("\t-random <INTEGER>: generate a random word with n characters.");
-        out.println("\t-file <INTEGER> <STRING>: number of words to read from file, -1 to read full file.");
+        out.println("\t-file <INTEGER> [<STRING>]+: number of files to read from, -1 to read all the files.");
         out.println("\t-h: this helpful message.");
         out.println();
     }
@@ -68,6 +69,13 @@ public class Main {
     public static void main(String[] args) {
 
         parseArguments(args);
+
+        out.print("Arguments: ");
+        for (String arg : args) {
+            out.print(arg + " ");
+        }
+        out.println();
+
         Scanner keyboard = new Scanner(in);
 
         if (treeWord.equals("") && words.isEmpty()) {
@@ -75,23 +83,25 @@ public class Main {
             treeWord = keyboard.next();
             treeWord = removeSpecialChars(treeWord);
             words.add(treeWord);
-            longestLength = treeWord.length();
             out.println();
         }
 
         if (time) printComparingTable();
 
 
-        if (words.size() == 1) out.println("Creating tree with " + words.get(0));
-        else out.println("Creating tree.");
+        out.println("Creating tree.");
 
-        CompactSuffixTree compactTree = //(words.isEmpty()) ?
-                    //new CompactSuffixTree(treeWord, feature) :
-                    new CompactSuffixTree(words.toArray(new String [0]), feature);
+        CompactSuffixTree compactTree = null;
+        try {
+            compactTree = new CompactSuffixTree(words.toArray(new String [0]), feature);
+        } catch (OutOfMemoryError ex) {
+            System.out.println("Exceeded limit in garbage collector " + feature.toString() +", try shorter texts.");
+            exit(-1);
+        }
 
-        searchPatterns(keyboard, compactTree);
+        searchPatterns(compactTree);
 
-        if (words.size() > 1 && (getLongest && getMaximals)) {
+        if (words.size() > 1 && (getLongest || getMaximals)) {
             System.out.println("Longest substring and maximals only available with one word tree.");
         } else {
             if (getLongest) out.println("Longest repeated substring: " + compactTree.getLongestSubstring() + "\n");
@@ -146,9 +156,13 @@ public class Main {
                     ++i;
                     try {
                         int number = Integer.parseInt(args[i]);
-                        ++i;
-                        String filename = args[i];
-                        words = readFile(filename, number);
+                        while (number > 0) {
+                            ++i;
+                            String filename = args[i];
+                            words.add(readFile(filename));
+                            --number;
+                        }
+
                         break;
                     } catch (NumberFormatException | NullPointerException ex) {
                         err.println("Trace: " + Arrays.toString(ex.getStackTrace()) + ". Message: " + ex.getMessage());
@@ -167,24 +181,20 @@ public class Main {
     /**
      * Read alphanumeric words from file [filename]
      * @param filename file where words are
-     * @param n number of words to read from file
      * @return list with all words read
      */
-    private static ArrayList<String> readFile(String filename, int n){
-        ArrayList<String> words = new ArrayList<>();
+    private static String readFile(String filename){
+        StringBuilder sb = new StringBuilder();
         File f = new File(filename);
         if (f.exists()) {
+            files.add(filename);
             Scanner s;
             try {
                 s = new Scanner(f);
 
-                while ((n < 0) ? s.hasNext() : n > 0) {
+                while (s.hasNext()) {
                     String word = removeSpecialChars(s.next());
-                    if (word.length() > longestLength) longestLength = word.length();
-                    if (!word.trim().equals("")) {
-                        words.add(word);
-                        if (n > 0) --n;
-                    }
+                    sb.append(word);
                 }
                 s.close();
             }
@@ -192,7 +202,7 @@ public class Main {
                 err.println("Trace: " + Arrays.toString(ex.getStackTrace()) + ". Message: " + ex.getMessage());
             }
         } else System.out.println("File does not exist");
-        return words;
+        return sb.toString();
     }
 
     /**
@@ -201,36 +211,39 @@ public class Main {
      * @return word without special characters
      */
     private static String removeSpecialChars(String s) {
-        return (caseSensitive) ? s.replaceAll("[^a-zA-Z0-9]+","").toLowerCase() :
-                                 s.replaceAll("[^a-zA-Z0-9]+","");
+        if (caseSensitive) {
+            return s.replaceAll("[^a-zA-Z0-9áéíóúÁÉÍÓÚ]+","");
+        }
+        else return s.replaceAll("[^a-zA-Z0-9áéíóúÁÉÍÓÚ]+","").toLowerCase();
     }
 
     /**
      * Search patterns until end condition satisfies
-     * @param keyboard input from which read the patterns
      * @param tree compacted tree where patterns ae looked in
      */
-    private static void searchPatterns(Scanner keyboard, CompactSuffixTree tree) {
+    private static void searchPatterns(CompactSuffixTree tree) {
+        Scanner keyboard = new Scanner(in);
         out.print("Enter pattern (0 to exit): ");
-        String pattern = keyboard.next();
-        pattern = removeSpecialChars(pattern);
+        String pattern = keyboard.nextLine();
+        File f = new File(pattern);
+        String patternSearch = (f.exists()) ? removeSpecialChars(readFile(pattern)) : removeSpecialChars(pattern);
 
-        while(!pattern.equals("0")){
-            Set<Integer> listOfWords = tree.search(tree.root, pattern, 0);
-            if (listOfWords.isEmpty()) System.out.println("Pattern not found in tree\n");
+        while(!patternSearch.equals("0")){
+            Set<Integer> listOfTexts = tree.search(tree.root, patternSearch, 0);
+            if (listOfTexts.isEmpty()) System.out.println("Pattern not found in tree\n");
             else {
-                StringBuilder sb = new StringBuilder("Pattern found in this/these words\n");
-                int i = 0;
-                for (int index : listOfWords) {
-                    ++i;
-                    sb.append(String.format("%" + longestLength + "s", words.get(index))).append("\t");
-                    if (i % 5 == 0) sb.append('\n');
+                if (!files.isEmpty()) {
+                    StringBuilder sb = new StringBuilder("Pattern found in text/s\n");
+                    for (int index : listOfTexts) {
+                        //sb.append(String.format("%" + longestLength + "s", words.get(index))).append("\t");
+                        sb.append(files.get(index)).append('\n');
+                    }
+                    out.println(sb.toString());
                 }
-                out.println(sb.toString());
             }
             out.print("Enter pattern (0 to exit): ");
-            pattern = keyboard.next();
-            pattern = removeSpecialChars(pattern);
+            pattern = keyboard.nextLine();
+            patternSearch = removeSpecialChars(pattern);
         }
     }
 
@@ -253,33 +266,48 @@ public class Main {
     }
 
     /**
-     * Print a comparing table between different algorithm startegies on tree construction.
+     * Print a comparing table between different algorithm strategies on tree construction.
      */
     private static void printComparingTable() {
         Timer timer = Timer.start();
 
-        AtomicReference<CompactSuffixTree> tree = new AtomicReference<>(new CompactSuffixTree(words.toArray(new String [0]), AlgorithmFeatures.N2));
+        AtomicReference<CompactSuffixTree> tree = new AtomicReference<>();
 
-        long elapsed_ns = timer.time();
-        long elapsed_ms = timer.convertTo(TimeUnit.MILLISECONDS, elapsed_ns);
-        long elapsed_us = timer.convertTo(TimeUnit.MICROSECONDS, elapsed_ns);
 
         String aux = "+-----------+-------+--------+-------------+";
 
-        out.println(aux);
-        out.format("%1s%10s%2s%5s%3s%6s%3s%8s%6s\n","|","ALGORITHM", "|", "ms", "|", "us", "|", "ns", "|");
-        out.println(aux);
-        out.format("%1s%10s%2s%5d%3s%7d%2s%10d%4s\n", "|", "N2", "|", elapsed_ms, "|", elapsed_us, "|", elapsed_ns, "|");
+        StringBuilder table = new StringBuilder(aux);
+        table.append(String.format("%1s%10s%2s%5s%3s%6s%3s%8s%6s\n","|","ALGORITHM", "|", "ms",
+                "|", "us", "|", "ns", "|"));
+        table.append(aux);
+
+        try {
+            tree.set(new CompactSuffixTree(words.toArray(new String [0]), AlgorithmFeatures.N2));
+            long elapsed_ns = timer.time();
+            long elapsed_ms = timer.convertTo(TimeUnit.MILLISECONDS, elapsed_ns);
+            long elapsed_us = timer.convertTo(TimeUnit.MICROSECONDS, elapsed_ns);
+
+            table.append(String.format("%1s%10s%2s%5d%3s%7d%2s%10d%4s\n", "|", "N2", "|", elapsed_ms,
+                    "|", elapsed_us, "|", elapsed_ns, "|"));
+        } catch (OutOfMemoryError ex) {
+            System.out.println("Exceeded limit in garbage collector N2, try shorter texts.");
+        }
 
         timer.reset();
 
-        tree.set(new CompactSuffixTree(words.toArray(new String [0]), AlgorithmFeatures.NLGN));
+        try {
+            tree.set(new CompactSuffixTree(words.toArray(new String [0]), AlgorithmFeatures.NLGN));
+            long elapsed_ns = timer.time();
+            long elapsed_ms = timer.convertTo(TimeUnit.MILLISECONDS, elapsed_ns);
+            long elapsed_us = timer.convertTo(TimeUnit.MICROSECONDS, elapsed_ns);
 
-        elapsed_ns = timer.time();
-        elapsed_ms = timer.convertTo(TimeUnit.MILLISECONDS, elapsed_ns);
-        elapsed_us = timer.convertTo(TimeUnit.MICROSECONDS, elapsed_ns);
+            table.append(String.format("%1s%10s%2s%5d%3s%7d%2s%10d%4s\n", "|", "NLGN", "|",
+                    elapsed_ms, "|", elapsed_us, "|", elapsed_ns, "|"));
+            table.append(aux).append('\n');
+        } catch (OutOfMemoryError ex) {
+            System.out.println("Exceeded limit in garbage collector NLGN, try shorter texts.");
+        }
 
-        out.format("%1s%10s%2s%5d%3s%7d%2s%10d%4s\n", "|", "NLGN", "|", elapsed_ms, "|", elapsed_us, "|", elapsed_ns, "|");
-        out.println(aux + '\n');
+        System.out.println(table.toString());
     }
 }

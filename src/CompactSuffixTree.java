@@ -99,6 +99,7 @@ class CompactSuffixTree {
             pos = aux;
             while (pos < pattern.length() && i < child.substring.length()
                     && pattern.charAt(pos) == child.substring.charAt(i)) { // Match character
+                //System.out.println(pattern.charAt(pos) + " " + child.substring.charAt(i));
                 i++;
                 pos++;
             }
@@ -182,7 +183,6 @@ class CompactSuffixTree {
                 }
             }
 
-
             // Matched node update
             matchedNode.begin += inTree;
             // Now contains the substring from the first character that did not match
@@ -204,7 +204,7 @@ class CompactSuffixTree {
                     maximals.add(current);
                 }
             }
-        	matchedNode.listOfWords.add(currentWord);		//hasta el trozo de antes de separar el nodo, tambien pertenece la palabra
+        	matchedNode.listOfWords.add(currentWord);
             insertSuffix(matchedNode, pos + inTree, indexInWord);
         }
     }
